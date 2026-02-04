@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
-    <title>Lékovka ULTIMATE 2026</title>
+    <title>Lékovka ULTIMATE 2026 - Sand Edition</title>
     <link rel="apple-touch-icon" href="https://api.iconify.design/lucide:pill.png?color=%238b8071&width=180">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,14 +43,14 @@
             <button onclick="switchTab('today')" id="tab-today" class="neu-btn px-6 md:px-8 py-4 font-bold active gap-2 text-xs md:text-base"><span class="iconify" data-icon="lucide:pill"></span> DNES</button>
             <button onclick="switchTab('calendar')" id="tab-calendar" class="neu-btn px-6 md:px-8 py-4 font-bold gap-2 text-xs md:text-base"><span class="iconify" data-icon="lucide:calendar-check"></span> HISTORIE</button>
         </div>
-        <button onclick="requestNotif()" class="neu-btn p-3 text-blue-500"><span class="iconify" data-icon="lucide:bell"></span></button>
+        <button onclick="requestNotif()" class="neu-btn p-3 text-accent"><span class="iconify" data-icon="lucide:bell"></span></button>
     </div>
 
     <div id="view-today">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="neu-raised p-5 text-center"><label class="text-[10px] uppercase font-black opacity-50 block">Zbývá dnes</label><span id="stat-rem" class="text-3xl font-black text-accent">0</span></div>
             <div class="neu-raised p-5 text-center"><label class="text-[10px] uppercase font-black opacity-50 block">Aktuální čas</label><span id="live-clock" class="text-3xl font-black text-slate-500">00:00</span></div>
-            <button onclick="takeAllToday()" class="neu-btn bg-slate-700 text-white font-black uppercase text-xs tracking-widest hover:bg-slate-800">Vzít vše naráz</button>
+            <button onclick="takeAllToday()" class="neu-btn bg-slate-700 text-white font-black uppercase text-xs tracking-widest hover:bg-slate-800 transition-colors">Vzít vše naráz</button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -58,7 +58,7 @@
                 <div id="form-container" class="neu-raised p-8 sticky top-8">
                     <h2 class="font-black text-sm mb-6 uppercase tracking-widest text-accent">Nastavení léku</h2>
                     
-                    <label class="text-[10px] font-bold uppercase opacity-60 block mb-2">Ikona</label>
+                    <label class="text-[10px] font-bold uppercase opacity-60 block mb-2">Ikona léku</label>
                     <div class="flex justify-between mb-6 p-2 neu-inset">
                         <input type="radio" name="f-icon" id="i1" value="lucide:pill" checked class="icon-radio hidden"><label for="i1" class="neu-btn p-2 w-10 h-10"><span class="iconify" data-icon="lucide:pill"></span></label>
                         <input type="radio" name="f-icon" id="i2" value="lucide:droplets" class="icon-radio hidden"><label for="i2" class="neu-btn p-2 w-10 h-10"><span class="iconify" data-icon="lucide:droplets"></span></label>
@@ -77,10 +77,10 @@
                         <div>
                             <label class="text-[10px] font-bold uppercase opacity-60 block mb-2">Časy</label>
                             <div class="grid grid-cols-2 gap-2 mb-3">
-                                <input type="checkbox" id="t-0800" value="08:00" class="time-checkbox hidden"><label for="t-0800" class="neu-btn py-2 text-xs font-bold">08:00</label>
-                                <input type="checkbox" id="t-1200" value="12:00" class="time-checkbox hidden"><label for="t-1200" class="neu-btn py-2 text-xs font-bold">12:00</label>
-                                <input type="checkbox" id="t-1800" value="18:00" class="time-checkbox hidden"><label for="t-1800" class="neu-btn py-2 text-xs font-bold">18:00</label>
-                                <input type="checkbox" id="t-2200" value="22:00" class="time-checkbox hidden"><label for="t-2200" class="neu-btn py-2 text-xs font-bold">22:00</label>
+                                <input type="checkbox" id="t-0800" value="08:00" class="time-checkbox hidden"><label for="t-0800" class="neu-btn py-2 text-xs font-bold">Ráno (08:00)</label>
+                                <input type="checkbox" id="t-1200" value="12:00" class="time-checkbox hidden"><label for="t-1200" class="neu-btn py-2 text-xs font-bold">Poledne (12:00)</label>
+                                <input type="checkbox" id="t-1800" value="18:00" class="time-checkbox hidden"><label for="t-1800" class="neu-btn py-2 text-xs font-bold">Večer (18:00)</label>
+                                <input type="checkbox" id="t-2200" value="22:00" class="time-checkbox hidden"><label for="t-2200" class="neu-btn py-2 text-xs font-bold">Noc (22:00)</label>
                             </div>
                             <div class="neu-inset px-2 py-1"><input id="f-custom-time" type="time"></div>
                         </div>
@@ -92,9 +92,9 @@
                             </div>
                         </div>
                         <div id="box-days"><div class="flex justify-between mt-2" id="f-days-box"></div></div>
-                        <div id="box-obden" class="hidden"><div class="neu-inset p-3 text-[10px] font-bold text-accent text-center uppercase">Režim 1-0-1</div></div>
+                        <div id="box-obden" class="hidden"><div class="neu-inset p-3 text-[10px] font-bold text-accent text-center uppercase tracking-widest">Střídavý režim 1-0-1</div></div>
                         <div class="flex gap-2 pt-2">
-                            <button onclick="saveMedicine()" class="neu-btn bg-slate-700 text-white flex-1 py-4 font-bold uppercase text-xs">Uložit lék</button>
+                            <button onclick="saveMedicine()" class="neu-btn bg-slate-700 text-white flex-1 py-4 font-bold uppercase text-xs hover:bg-slate-800 transition-colors">Uložit lék</button>
                             <button id="btn-cancel" onclick="resetForm()" class="hidden neu-btn px-6 text-red-500 font-bold">✕</button>
                         </div>
                     </div>
@@ -104,9 +104,9 @@
         </div>
 
         <div class="mt-12 neu-raised p-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <h3 class="font-black text-xs uppercase opacity-40">Správa dat</h3>
+            <h3 class="font-black text-xs uppercase opacity-40 tracking-widest">Správa dat a záloha</h3>
             <div class="flex flex-wrap gap-4 justify-center">
-                <button onclick="testNotification()" class="neu-btn px-6 py-2 text-[10px] font-bold uppercase text-blue-500 border border-blue-200">TEST NOTIFIKACE</button>
+                <button onclick="testNotification()" class="neu-btn px-6 py-2 text-[10px] font-bold uppercase text-blue-500 border border-blue-200">Test Notifikace</button>
                 <button onclick="exportJSON()" class="neu-btn px-6 py-2 text-[10px] font-bold uppercase">Export</button>
                 <label class="neu-btn px-6 py-2 text-[10px] font-bold cursor-pointer uppercase">Import <input type="file" class="hidden" onchange="importJSON(event)"></label>
             </div>
@@ -116,16 +116,16 @@
     <div id="view-calendar" class="hidden">
         <div class="neu-raised p-8">
             <div class="flex justify-between items-center mb-8">
-                <button onclick="changeMonth(-1)" class="neu-btn p-3 px-6"><</button>
+                <button onclick="changeMonth(-1)" class="neu-btn p-3 px-6 font-bold text-slate-500"><</button>
                 <h2 id="month-label" class="font-black text-xl uppercase text-slate-700">Měsíc 2026</h2>
-                <button onclick="changeMonth(1)" class="neu-btn p-3 px-6">></button>
+                <button onclick="changeMonth(1)" class="neu-btn p-3 px-6 font-bold text-slate-500">></button>
             </div>
             <div class="calendar-grid mb-2 text-[10px] font-black opacity-30 text-center uppercase">
                 <div>Po</div><div>Út</div><div>St</div><div>Čt</div><div>Pá</div><div>So</div><div>Ne</div>
             </div>
             <div id="calendar-body" class="calendar-grid"></div>
             <div id="day-detail" class="neu-inset p-6 mt-8 hidden">
-                <h3 id="detail-date" class="font-bold text-xs mb-4 uppercase opacity-50"></h3>
+                <h3 id="detail-date" class="font-bold text-xs mb-4 uppercase opacity-50 text-slate-800"></h3>
                 <div id="detail-list" class="space-y-3"></div>
             </div>
         </div>
@@ -138,17 +138,13 @@
     const daysName = ["Ne","Po","Út","St","Čt","Pá","So"];
     let viewDate = new Date();
 
-    // Registrace Service Workera
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(() => console.log("SW OK"));
-    }
-
     // Inicializace
     if (localStorage.getItem('dark-mode') === 'true') {
         document.body.classList.add('dark');
         document.getElementById('dark-icon').setAttribute('data-icon', 'lucide:sun');
     }
 
+    // Generování checkboxů pro dny
     const dBox = document.getElementById('f-days-box');
     [1,2,3,4,5,6,0].forEach(d => {
         dBox.innerHTML += `<input type="checkbox" id="d-${d}" value="${d}" class="hidden day-checkbox"><label for="d-${d}" class="w-8 h-8 flex items-center justify-center rounded-full text-[10px] font-bold cursor-pointer neu-btn">${daysName[d]}</label>`;
@@ -172,33 +168,9 @@
     function switchTab(t) {
         document.getElementById('view-today').classList.toggle('hidden', t !== 'today');
         document.getElementById('view-calendar').classList.toggle('hidden', t !== 'calendar');
+        document.querySelectorAll('.neu-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + t).classList.add('active');
         if(t === 'calendar') renderCalendar();
-    }
-
-    function requestNotif() {
-        Notification.requestPermission().then(p => {
-            if(p === "granted") alert("Oznámení povolena!");
-            else alert("Oznámení zamítnuta. Zkontrolujte nastavení telefonu.");
-        });
-    }
-
-    function sendNotification(title, body) {
-        if (Notification.permission === "granted" && 'serviceWorker' in navigator) {
-            navigator.serviceWorker.ready.then(reg => {
-                reg.showNotification(title, {
-                    body: body,
-                    icon: "https://api.iconify.design/lucide:pill.png?color=%238b8071",
-                    vibrate: [200, 100, 200],
-                    badge: "https://api.iconify.design/lucide:pill.png?color=%238b8071"
-                });
-            });
-        }
-    }
-
-    function testNotification() {
-        if(Notification.permission !== "granted") return alert("Povolte nejdřív zvonkem!");
-        alert("Zavřete aplikaci. Test přijde za 5 sekund.");
-        setTimeout(() => sendNotification("Test Lékovky", "Pokud toto vidíte, notifikace fungují!"), 5000);
     }
 
     function calculateExpiry(m) {
@@ -206,6 +178,7 @@
         let dailyAvg = 0;
         if (m.mode === 'everyother') dailyAvg = (m.times.length * m.dose) / 2;
         else dailyAvg = ((m.days.length || 7) * m.times.length * m.dose) / 7;
+        if (dailyAvg === 0) return "∞";
         const daysLeft = Math.floor(m.stock / dailyAvg);
         const expDate = new Date(); expDate.setDate(expDate.getDate() + daysLeft);
         return { dateStr: expDate.toLocaleDateString('cs-CZ'), critical: daysLeft < 4 };
@@ -214,8 +187,9 @@
     function shouldShowToday(m, date) {
         const d = new Date(date); d.setHours(0,0,0,0);
         if (m.mode === 'everyother') {
-            const start = new Date(m.startDate); start.setHours(0,0,0,0);
-            return Math.round((d - start) / 86400000) % 2 === 0;
+            const start = new Date(m.startDate || new Date()); start.setHours(0,0,0,0);
+            const diffDays = Math.floor((d - start) / 86400000);
+            return diffDays % 2 === 0;
         }
         return m.days.length === 0 || m.days.includes(d.getDay());
     }
@@ -225,21 +199,24 @@
         const id = document.getElementById('f-id').value;
         const icon = document.querySelector('input[name="f-icon"]:checked').value;
         let times = Array.from(document.querySelectorAll(".time-checkbox:checked")).map(c => c.value);
-        if(document.getElementById('f-custom-time').value) times.push(document.getElementById('f-custom-time').value);
+        const customT = document.getElementById('f-custom-time').value;
+        if(customT) times.push(customT);
         times = [...new Set(times)].sort();
-        if(!name || times.length === 0) return alert("Zadej jméno a čas!");
+        
+        if(!name || times.length === 0) { alert("Zadej název a aspoň jeden čas!"); return; }
 
         let meds = load(DB_KEY);
+        const mode = document.querySelector('input[name="mode"]:checked').value;
         const medObj = { 
             id: id ? parseInt(id) : Date.now(), 
             name, icon, 
             stock: parseFloat(document.getElementById('f-zasoba').value) || 0, 
             dose: parseFloat(document.getElementById('f-davka').value) || 1, 
-            times, 
-            mode: document.querySelector('input[name="mode"]:checked').value, 
+            times, mode, 
             days: Array.from(document.querySelectorAll(".day-checkbox:checked")).map(c => parseInt(c.value)), 
             startDate: document.getElementById('f-start-date').value || new Date().toISOString() 
         };
+
         if(id) meds = meds.map(m => m.id == id ? medObj : m); else meds.push(medObj);
         save(DB_KEY, meds); resetForm(); render();
     }
@@ -259,38 +236,67 @@
                 if(!done) rem++;
                 timesHtml += `<div class="flex justify-between items-center py-2 border-b border-black/5 last:border-0 ${done?'taken-row':''}">
                     <span class="font-bold text-sm">${t}</span>
-                    ${done ? '<span class="text-green-600 font-black text-[10px]">OK</span>' : `<button onclick="take(${m.id},'${t}')" class="neu-btn px-4 py-1 text-[10px] font-black uppercase">Vzít</button>`}
+                    ${done ? '<span class="text-green-600 font-black text-[10px]">VZATO ✅</span>' : `<button onclick="take(${m.id},'${t}')" class="neu-btn px-4 py-1 text-[10px] font-black uppercase">Vzít ${m.dose}ks</button>`}
                 </div>`;
             });
 
+            let stockColor = "text-green-600";
+            if(m.stock < 5) stockColor = "text-red-500";
+            else if(m.stock < 15) stockColor = "text-orange-500";
+
             list.innerHTML += `<div class="neu-raised p-6">
                 <div class="flex gap-4 items-center mb-4">
-                    <div class="neu-inset p-3"><span class="iconify text-xl" data-icon="${m.icon}"></span></div>
-                    <div class="flex-1"><h3 class="font-black text-xl">${m.name}</h3><p class="text-[10px] font-bold opacity-50 uppercase">Sklad: ${m.stock} ks</p></div>
+                    <div class="neu-inset p-3"><span class="iconify text-xl" data-icon="${m.icon || 'lucide:pill'}"></span></div>
+                    <div class="flex-1"><h3 class="font-black text-xl">${m.name}</h3><p class="text-[10px] font-bold ${stockColor} uppercase">Sklad: ${m.stock} ks</p></div>
                     <button onclick="editMed(${m.id})" class="text-slate-400 p-2"><span class="iconify" data-icon="lucide:edit-3"></span></button>
                     <button onclick="deleteMed(${m.id})" class="text-red-300 p-2"><span class="iconify" data-icon="lucide:trash-2"></span></button>
                 </div>
                 <div class="neu-inset p-3 mb-3">${timesHtml}</div>
                 <div class="flex justify-between items-center">
                     <span class="text-[9px] font-black uppercase px-2 py-1 rounded-full bg-black/5 ${expiry.critical?'text-red-500':''}">Dojde: ${expiry.dateStr || expiry}</span>
-                    <button onclick="addCustomStock(${m.id})" class="text-[9px] font-bold opacity-50 uppercase">+ Doplnit</button>
+                    <button onclick="addCustomStock(${m.id})" class="text-[9px] font-bold opacity-50 uppercase tracking-widest">+ Doplnit</button>
                 </div>
             </div>`;
         });
         document.getElementById('stat-rem').innerText = rem;
-        checkAllNotifs(meds, hist);
+        checkNotif(meds, hist);
+        cleanupHistory(); // Automatické promazání starých dat
     }
 
-    function checkAllNotifs(meds, hist) {
+    function requestNotif() { 
+        Notification.requestPermission().then(permission => {
+            if(permission === "granted") alert("Oznámení povolena!");
+            else alert("Oznámení zamítnuta. Povolte je v nastavení prohlížeče.");
+        });
+    }
+
+    function testNotification() {
+        if(Notification.permission !== "granted") { alert("Povolte oznámení zvonkem!"); return; }
+        setTimeout(() => {
+            new Notification("Lékovka 2026", { body: "Test notifikace funguje!", icon: "https://api.iconify.design/lucide:pill.png" });
+        }, 3000);
+    }
+    
+    function checkNotif(meds, hist) {
         const now = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
         const todayStr = new Date().toLocaleDateString('cs-CZ');
         meds.forEach(m => {
             if(shouldShowToday(m, new Date()) && m.times.includes(now)) {
                 if(!hist.some(h => h.medId === m.id && h.date === todayStr && h.time === now)) {
-                    sendNotification("Čas na lék: " + m.name, "Dávka: " + m.dose + " ks");
+                    if(Notification.permission === "granted") {
+                        new Notification("Čas na lék: " + m.name, { body: "Dávka: " + m.dose + "ks", icon: "https://api.iconify.design/lucide:pill.png" });
+                    }
                 }
             }
         });
+    }
+
+    function cleanupHistory() {
+        let hist = load(HIST_KEY);
+        if(hist.length > 500) { // Limit historie pro plynulost
+            hist = hist.slice(-300);
+            save(HIST_KEY, hist);
+        }
     }
 
     window.take = (medId, time) => {
@@ -301,8 +307,8 @@
     }
 
     window.addCustomStock = (medId) => {
-        const amount = prompt("Kolik přidat?");
-        if (amount) {
+        const amount = prompt("Kolik kusů přidat?");
+        if (amount && !isNaN(amount)) {
             let meds = load(DB_KEY); meds.find(x => x.id === medId).stock += parseFloat(amount);
             save(DB_KEY, meds); render();
         }
@@ -332,9 +338,13 @@
         const first = (new Date(y, m, 1).getDay() + 6) % 7;
         for(let i=0; i < first; i++) body.innerHTML += `<div></div>`;
         for(let d=1; d <= new Date(y, m+1, 0).getDate(); d++) {
-            const dStr = new Date(y, m, d).toLocaleDateString('cs-CZ');
+            const dateObj = new Date(y, m, d);
+            const dStr = dateObj.toLocaleDateString('cs-CZ');
+            const sched = meds.filter(med => shouldShowToday(med, dateObj));
+            const total = sched.reduce((acc, curr) => acc + curr.times.length, 0);
             const taken = hist.filter(h => h.date === dStr).length;
-            body.innerHTML += `<div onclick="showDayDetail('${dStr}', ${new Date(y,m,d).getTime()})" class="cal-day neu-btn text-xs ${taken>0?'border-green-500':''}">${d}</div>`;
+            let borderClass = total > 0 ? (taken >= total ? "border-green-500 bg-green-500/10" : (taken > 0 ? "border-orange-500" : "border-red-300")) : "";
+            body.innerHTML += `<div onclick="showDayDetail('${dStr}', ${dateObj.getTime()})" class="cal-day neu-btn text-xs border-2 ${borderClass}">${d}</div>`;
         }
     }
 
@@ -357,7 +367,11 @@
         document.getElementById('f-nazev').value = m.name;
         document.getElementById('f-zasoba').value = m.stock;
         document.getElementById('f-davka').value = m.dose;
+        document.getElementById('f-start-date').value = m.startDate;
         document.querySelectorAll(".time-checkbox").forEach(c => c.checked = m.times.includes(c.value));
+        document.getElementById(m.mode === 'everyother' ? 'mode-everyother' : 'mode-days').checked = true;
+        toggleMode();
+        document.querySelectorAll(".day-checkbox").forEach(c => c.checked = m.days.includes(parseInt(c.value)));
         document.getElementById('form-container').classList.add('editing-mode');
         document.getElementById('btn-cancel').classList.remove('hidden');
         window.scrollTo({top: 0, behavior: 'smooth'});
@@ -365,19 +379,16 @@
 
     function resetForm() {
         document.getElementById('f-id').value = ""; document.getElementById('f-nazev').value = "";
+        document.getElementById('f-zasoba').value = 0; document.getElementById('f-davka').value = 1;
         document.querySelectorAll(".time-checkbox, .day-checkbox").forEach(c => c.checked = false);
+        document.getElementById('f-custom-time').value = "";
         document.getElementById('form-container').classList.remove('editing-mode');
         document.getElementById('btn-cancel').classList.add('hidden');
     }
 
-    window.deleteMed = (id) => confirm("Smazat?") && (save(DB_KEY, load(DB_KEY).filter(x => x.id != id)), render());
+    window.deleteMed = (id) => confirm("Smazat lék?") && (save(DB_KEY, load(DB_KEY).filter(x => x.id != id)), render());
     function changeMonth(d) { viewDate.setMonth(viewDate.getMonth() + d); renderCalendar(); }
     
-    setInterval(() => {
-        document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
-        if(new Date().getSeconds() === 0) render(); 
-    }, 1000);
-
     function exportJSON() {
         const data = JSON.stringify({meds: load(DB_KEY), hist: load(HIST_KEY)});
         const blob = new Blob([data], {type: "application/json"});
@@ -386,13 +397,20 @@
 
     function importJSON(e) {
         const reader = new FileReader();
-        reader.onload = (ev) => {
-            const data = JSON.parse(ev.target.result);
-            save(DB_KEY, data.meds); save(HIST_KEY, data.hist);
-            location.reload();
+        reader.onload = (event) => {
+            try {
+                const data = JSON.parse(event.target.result);
+                save(DB_KEY, data.meds); save(HIST_KEY, data.hist);
+                location.reload();
+            } catch(err) { alert("Chyba při importu!"); }
         };
         reader.readAsText(e.target.files[0]);
     }
+
+    setInterval(() => {
+        document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
+        if(new Date().getSeconds() === 0) render(); 
+    }, 1000);
 
     render();
 </script>
