@@ -2,105 +2,131 @@
 <html lang="cs">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>Lékovka Ultimate S24</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
+    <title>Lékovka ULTIMATE 2026</title>
     <link rel="apple-touch-icon" href="https://api.iconify.design/lucide:pill.png?color=%238b8071&width=180">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #f0ede9; --shadow-light: #ffffff; --shadow-dark: #d1ccc3; --primary: #434343; --accent: #8b8071; --text: #4a4541; }
-        .dark { --bg: #2d2a27; --shadow-light: #3a3632; --shadow-dark: #201e1b; --primary: #e8ece8; --accent: #b0a496; --text: #d6d2cd; }
-        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text); min-height: 100vh; transition: 0.3s; font-size: 17px; }
-        
-        .neu-raised { background: var(--bg); box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light); border-radius: 20px; }
-        .neu-inset { background: var(--bg); box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light); border-radius: 12px; }
-        .neu-btn { background: var(--bg); box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; min-height: 50px; font-weight: 700; transition: 0.2s; }
-        .neu-btn:active { box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); transform: scale(0.97); }
-        
-        /* Kalendář - responzivní úprava pro S24 */
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-        .cal-day { aspect-ratio: 1/1; font-size: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; position: relative; }
-        .cal-dot { width: 5px; height: 5px; background: #10b981; border-radius: 50%; position: absolute; bottom: 4px; }
-        
-        .day-checkbox:checked + label, .time-checkbox:checked + label, .mode-radio:checked + label, .icon-radio:checked + label { 
-            box-shadow: inset 3px 3px 6px var(--shadow-dark); color: var(--accent); font-weight: 800; border: 1px solid var(--accent); 
+        :root { 
+            --bg: #f0ede9; --shadow-light: #ffffff; --shadow-dark: #d1ccc3; 
+            --primary: #434343; --accent: #8b8071; --text: #4a4541;
         }
-        input { border: none; outline: none; background: transparent; width: 100%; font-weight: 700; padding: 8px; color: var(--primary); font-size: 18px !important; }
+        .dark {
+            --bg: #2d2a27; --shadow-light: #3a3632; --shadow-dark: #201e1b;
+            --primary: #e8ece8; --accent: #b0a496; --text: #d6d2cd;
+        }
+        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text); min-height: 100vh; transition: 0.3s; -webkit-tap-highlight-color: transparent; }
+        .neu-raised { background: var(--bg); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); border-radius: 20px; border: 2px solid transparent; }
+        .neu-inset { background: var(--bg); box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); border-radius: 12px; }
+        .neu-btn { background: var(--bg); box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); cursor: pointer; border: none; transition: 0.2s; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text); }
+        .neu-btn:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); transform: scale(0.98); }
+        .neu-btn.active { color: var(--primary); box-shadow: inset 4px 4px 8px var(--shadow-dark); border: 1px solid var(--shadow-dark); }
+        .editing-mode { border: 2px solid #b45309 !important; }
+        .day-checkbox:checked + label, .time-checkbox:checked + label, .mode-radio:checked + label, .icon-radio:checked + label { box-shadow: inset 4px 4px 8px var(--shadow-dark); color: var(--primary); font-weight: 800; border: 1px solid var(--accent); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+        .cal-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 700; border: 2px solid transparent; cursor: pointer; }
         .hidden { display: none !important; }
-        .taken-row { opacity: 0.3; text-decoration: line-through; }
+        input { border: none; outline: none; background: transparent; width: 100%; font-weight: 600; padding: 4px; color: var(--primary); font-size: 16px; }
+        .taken-row { opacity: 0.4; text-decoration: line-through; }
+        .text-accent { color: var(--accent); }
     </style>
 </head>
-<body class="p-3">
+<body class="p-4 md:p-8">
 
-<div class="max-w-md mx-auto">
-    <div class="flex justify-between items-center mb-6 gap-2">
-        <button onclick="toggleDarkMode()" class="neu-btn w-12 h-12 shrink-0"><span class="iconify" id="dark-icon" data-icon="lucide:moon"></span></button>
-        <div class="flex gap-2 flex-1">
-            <button onclick="switchTab('today')" id="tab-today" class="neu-btn flex-1 text-sm active">DNES</button>
-            <button onclick="switchTab('calendar')" id="tab-calendar" class="neu-btn flex-1 text-sm">HISTORIE</button>
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <button onclick="toggleDarkMode()" class="neu-btn p-3"><span class="iconify" id="dark-icon" data-icon="lucide:moon"></span></button>
+        <div class="flex gap-4">
+            <button onclick="switchTab('today')" id="tab-today" class="neu-btn px-6 md:px-8 py-4 font-bold active gap-2 text-xs md:text-base"><span class="iconify" data-icon="lucide:pill"></span> DNES</button>
+            <button onclick="switchTab('calendar')" id="tab-calendar" class="neu-btn px-6 md:px-8 py-4 font-bold gap-2 text-xs md:text-base"><span class="iconify" data-icon="lucide:calendar-check"></span> HISTORIE</button>
         </div>
-        <button onclick="requestNotif()" class="neu-btn w-12 h-12 shrink-0 text-blue-500"><span class="iconify" data-icon="lucide:bell"></span></button>
+        <button onclick="requestNotif()" class="neu-btn p-3 text-blue-500"><span class="iconify" data-icon="lucide:bell"></span></button>
     </div>
 
     <div id="view-today">
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="neu-raised p-4 text-center"><label class="text-[10px] font-bold opacity-50 block uppercase">Zbývá</label><span id="stat-rem" class="text-2xl font-black text-accent">0</span></div>
-            <div class="neu-raised p-4 text-center"><label class="text-[10px] font-bold opacity-50 block uppercase">Čas</label><span id="live-clock" class="text-2xl font-black opacity-50">00:00</span></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="neu-raised p-5 text-center"><label class="text-[10px] uppercase font-black opacity-50 block">Zbývá dnes</label><span id="stat-rem" class="text-3xl font-black text-accent">0</span></div>
+            <div class="neu-raised p-5 text-center"><label class="text-[10px] uppercase font-black opacity-50 block">Aktuální čas</label><span id="live-clock" class="text-3xl font-black text-slate-500">00:00</span></div>
+            <button onclick="takeAllToday()" class="neu-btn bg-slate-700 text-white font-black uppercase text-xs tracking-widest hover:bg-slate-800">Vzít vše naráz</button>
         </div>
 
-        <div id="plan-list" class="space-y-4 mb-8"></div>
-
-        <div id="form-container" class="neu-raised p-5">
-            <h2 class="font-black mb-4 text-center text-accent uppercase text-xs tracking-widest">Nastavení léku</h2>
-            
-            <div class="space-y-4">
-                <div class="neu-inset px-2"><input id="f-nazev" type="text" placeholder="Název léku"></div>
-                
-                <div class="flex justify-around p-2 neu-inset">
-                    <input type="radio" name="f-icon" id="i1" value="lucide:pill" checked class="icon-radio hidden"><label for="i1" class="neu-btn w-10 h-10"><span class="iconify" data-icon="lucide:pill"></span></label>
-                    <input type="radio" name="f-icon" id="i2" value="lucide:droplets" class="icon-radio hidden"><label for="i2" class="neu-btn w-10 h-10"><span class="iconify" data-icon="lucide:droplets"></span></label>
-                    <input type="radio" name="f-icon" id="i3" value="lucide:syringe" class="icon-radio hidden"><label for="i3" class="neu-btn w-10 h-10"><span class="iconify" data-icon="lucide:syringe"></span></label>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="neu-inset px-2"><label class="text-[9px] block opacity-50 ml-1">Sklad</label><input id="f-zasoba" type="number" step="0.5" value="10"></div>
-                    <div class="neu-inset px-2"><label class="text-[9px] block opacity-50 ml-1">Dávka</label><input id="f-davka" type="number" step="0.5" value="1"></div>
-                </div>
-
-                <div>
-                    <label class="text-[10px] font-bold uppercase opacity-50 mb-2 block">Kdy užívat?</label>
-                    <div class="flex gap-2 mb-3">
-                        <input type="radio" id="m-days" name="mode" value="days" class="mode-radio hidden" checked onchange="toggleMode()"><label for="m-days" class="neu-btn flex-1 text-[10px]">DNY</label>
-                        <input type="radio" id="m-ob" name="mode" value="everyother" class="mode-radio hidden" onchange="toggleMode()"><label for="m-ob" class="neu-btn flex-1 text-[10px]">OB DEN</label>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div class="lg:col-span-5">
+                <div id="form-container" class="neu-raised p-8 sticky top-8">
+                    <h2 class="font-black text-sm mb-6 uppercase tracking-widest text-accent">Nastavení léku</h2>
+                    
+                    <label class="text-[10px] font-bold uppercase opacity-60 block mb-2">Ikona</label>
+                    <div class="flex justify-between mb-6 p-2 neu-inset">
+                        <input type="radio" name="f-icon" id="i1" value="lucide:pill" checked class="icon-radio hidden"><label for="i1" class="neu-btn p-2 w-10 h-10"><span class="iconify" data-icon="lucide:pill"></span></label>
+                        <input type="radio" name="f-icon" id="i2" value="lucide:droplets" class="icon-radio hidden"><label for="i2" class="neu-btn p-2 w-10 h-10"><span class="iconify" data-icon="lucide:droplets"></span></label>
+                        <input type="radio" name="f-icon" id="i3" value="lucide:syringe" class="icon-radio hidden"><label for="i3" class="neu-btn p-2 w-10 h-10"><span class="iconify" data-icon="lucide:syringe"></span></label>
+                        <input type="radio" name="f-icon" id="i4" value="lucide:thermometer" class="icon-radio hidden"><label for="i4" class="neu-btn p-2 w-10 h-10"><span class="iconify" data-icon="lucide:thermometer"></span></label>
                     </div>
-                    <div id="box-days" class="flex justify-between gap-1">
+
+                    <input type="hidden" id="f-id">
+                    <input type="hidden" id="f-start-date">
+                    <div class="space-y-4">
+                        <div><label class="text-[10px] font-bold uppercase opacity-60">Název léku</label><div class="neu-inset p-3"><input id="f-nazev" type="text" placeholder="Např. Hořčík"></div></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="text-[10px] font-bold uppercase opacity-60">Sklad (ks)</label><div class="neu-inset p-3"><input id="f-zasoba" type="number" step="0.5" value="0"></div></div>
+                            <div><label class="text-[10px] font-bold uppercase opacity-60">Dávka (ks)</label><div class="neu-inset p-3"><input id="f-davka" type="number" step="0.25" value="1"></div></div>
                         </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase opacity-60 block mb-2">Časy</label>
+                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                <input type="checkbox" id="t-0800" value="08:00" class="time-checkbox hidden"><label for="t-0800" class="neu-btn py-2 text-xs font-bold">08:00</label>
+                                <input type="checkbox" id="t-1200" value="12:00" class="time-checkbox hidden"><label for="t-1200" class="neu-btn py-2 text-xs font-bold">12:00</label>
+                                <input type="checkbox" id="t-1800" value="18:00" class="time-checkbox hidden"><label for="t-1800" class="neu-btn py-2 text-xs font-bold">18:00</label>
+                                <input type="checkbox" id="t-2200" value="22:00" class="time-checkbox hidden"><label for="t-2200" class="neu-btn py-2 text-xs font-bold">22:00</label>
+                            </div>
+                            <div class="neu-inset px-2 py-1"><input id="f-custom-time" type="time"></div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase opacity-60 block mb-2">Frekvence</label>
+                            <div class="flex gap-2 mb-3">
+                                <input type="radio" id="mode-days" name="mode" value="days" class="mode-radio hidden" checked onchange="toggleMode()"><label for="mode-days" class="neu-btn flex-1 py-2 text-[10px] font-bold uppercase">Dny v týdnu</label>
+                                <input type="radio" id="mode-everyother" name="mode" value="everyother" class="mode-radio hidden" onchange="toggleMode()"><label for="mode-everyother" class="neu-btn flex-1 py-2 text-[10px] font-bold uppercase">Ob den</label>
+                            </div>
+                        </div>
+                        <div id="box-days"><div class="flex justify-between mt-2" id="f-days-box"></div></div>
+                        <div id="box-obden" class="hidden"><div class="neu-inset p-3 text-[10px] font-bold text-accent text-center uppercase">Režim 1-0-1</div></div>
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="saveMedicine()" class="neu-btn bg-slate-700 text-white flex-1 py-4 font-bold uppercase text-xs">Uložit lék</button>
+                            <button id="btn-cancel" onclick="resetForm()" class="hidden neu-btn px-6 text-red-500 font-bold">✕</button>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            <div class="lg:col-span-7 space-y-4" id="plan-list"></div>
+        </div>
 
-                <div class="neu-inset px-2"><label class="text-[9px] block opacity-50 ml-1">Čas</label><input id="f-time" type="time"></div>
-
-                <input type="hidden" id="f-id">
-                <button onclick="saveMedicine()" class="neu-btn bg-slate-700 text-white w-full uppercase py-4">Uložit</button>
+        <div class="mt-12 neu-raised p-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <h3 class="font-black text-xs uppercase opacity-40">Správa dat</h3>
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button onclick="testNotification()" class="neu-btn px-6 py-2 text-[10px] font-bold uppercase text-blue-500 border border-blue-200">TEST NOTIFIKACE</button>
+                <button onclick="exportJSON()" class="neu-btn px-6 py-2 text-[10px] font-bold uppercase">Export</button>
+                <label class="neu-btn px-6 py-2 text-[10px] font-bold cursor-pointer uppercase">Import <input type="file" class="hidden" onchange="importJSON(event)"></label>
             </div>
         </div>
     </div>
 
     <div id="view-calendar" class="hidden">
-        <div class="neu-raised p-4">
-            <div class="flex justify-between items-center mb-4">
-                <button onclick="changeMonth(-1)" class="neu-btn w-10 h-10"><</button>
-                <h2 id="month-label" class="font-black uppercase text-sm">Březen 2026</h2>
-                <button onclick="changeMonth(1)" class="neu-btn w-10 h-10">></button>
+        <div class="neu-raised p-8">
+            <div class="flex justify-between items-center mb-8">
+                <button onclick="changeMonth(-1)" class="neu-btn p-3 px-6"><</button>
+                <h2 id="month-label" class="font-black text-xl uppercase text-slate-700">Měsíc 2026</h2>
+                <button onclick="changeMonth(1)" class="neu-btn p-3 px-6">></button>
             </div>
-            <div class="calendar-grid text-[10px] font-bold opacity-30 text-center mb-2">
+            <div class="calendar-grid mb-2 text-[10px] font-black opacity-30 text-center uppercase">
                 <div>Po</div><div>Út</div><div>St</div><div>Čt</div><div>Pá</div><div>So</div><div>Ne</div>
             </div>
             <div id="calendar-body" class="calendar-grid"></div>
-            
-            <div id="day-detail" class="neu-inset p-4 mt-6 hidden">
-                <h3 id="detail-date" class="font-bold text-xs mb-3 opacity-50 uppercase"></h3>
-                <div id="detail-list" class="space-y-2 text-sm"></div>
+            <div id="day-detail" class="neu-inset p-6 mt-8 hidden">
+                <h3 id="detail-date" class="font-bold text-xs mb-4 uppercase opacity-50"></h3>
+                <div id="detail-list" class="space-y-3"></div>
             </div>
         </div>
     </div>
@@ -109,17 +135,39 @@
 <script>
     const DB_KEY = "Lekovka_V2026_Final";
     const HIST_KEY = "Lekovka_Hist_V2026_Final";
+    const daysName = ["Ne","Po","Út","St","Čt","Pá","So"];
     let viewDate = new Date();
 
-    // Init dny
-    const daysName = ["Ne","Po","Út","St","Čt","Pá","So"];
-    const dBox = document.getElementById('box-days');
+    // Registrace Service Workera
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(() => console.log("SW OK"));
+    }
+
+    // Inicializace
+    if (localStorage.getItem('dark-mode') === 'true') {
+        document.body.classList.add('dark');
+        document.getElementById('dark-icon').setAttribute('data-icon', 'lucide:sun');
+    }
+
+    const dBox = document.getElementById('f-days-box');
     [1,2,3,4,5,6,0].forEach(d => {
-        dBox.innerHTML += `<input type="checkbox" id="d-${d}" value="${d}" class="day-checkbox hidden"><label for="d-${d}" class="w-10 h-10 neu-btn text-[10px]">${daysName[d]}</label>`;
+        dBox.innerHTML += `<input type="checkbox" id="d-${d}" value="${d}" class="hidden day-checkbox"><label for="d-${d}" class="w-8 h-8 flex items-center justify-center rounded-full text-[10px] font-bold cursor-pointer neu-btn">${daysName[d]}</label>`;
     });
 
     const load = (k) => JSON.parse(localStorage.getItem(k)) || [];
     const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+    function toggleDarkMode() {
+        const dark = document.body.classList.toggle('dark');
+        localStorage.setItem('dark-mode', dark);
+        document.getElementById('dark-icon').setAttribute('data-icon', dark ? 'lucide:sun' : 'lucide:moon');
+    }
+
+    function toggleMode() {
+        const isEveryOther = document.getElementById('mode-everyother').checked;
+        document.getElementById('box-days').classList.toggle('hidden', isEveryOther);
+        document.getElementById('box-obden').classList.toggle('hidden', !isEveryOther);
+    }
 
     function switchTab(t) {
         document.getElementById('view-today').classList.toggle('hidden', t !== 'today');
@@ -127,19 +175,46 @@
         if(t === 'calendar') renderCalendar();
     }
 
-    function toggleMode() {
-        document.getElementById('box-days').classList.toggle('hidden', document.getElementById('m-ob').checked);
+    function requestNotif() {
+        Notification.requestPermission().then(p => {
+            if(p === "granted") alert("Oznámení povolena!");
+            else alert("Oznámení zamítnuta. Zkontrolujte nastavení telefonu.");
+        });
     }
 
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark');
-        localStorage.setItem('dark-mode', document.body.classList.contains('dark'));
+    function sendNotification(title, body) {
+        if (Notification.permission === "granted" && 'serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(reg => {
+                reg.showNotification(title, {
+                    body: body,
+                    icon: "https://api.iconify.design/lucide:pill.png?color=%238b8071",
+                    vibrate: [200, 100, 200],
+                    badge: "https://api.iconify.design/lucide:pill.png?color=%238b8071"
+                });
+            });
+        }
+    }
+
+    function testNotification() {
+        if(Notification.permission !== "granted") return alert("Povolte nejdřív zvonkem!");
+        alert("Zavřete aplikaci. Test přijde za 5 sekund.");
+        setTimeout(() => sendNotification("Test Lékovky", "Pokud toto vidíte, notifikace fungují!"), 5000);
+    }
+
+    function calculateExpiry(m) {
+        if (!m.stock || m.stock <= 0) return "Prázdno";
+        let dailyAvg = 0;
+        if (m.mode === 'everyother') dailyAvg = (m.times.length * m.dose) / 2;
+        else dailyAvg = ((m.days.length || 7) * m.times.length * m.dose) / 7;
+        const daysLeft = Math.floor(m.stock / dailyAvg);
+        const expDate = new Date(); expDate.setDate(expDate.getDate() + daysLeft);
+        return { dateStr: expDate.toLocaleDateString('cs-CZ'), critical: daysLeft < 4 };
     }
 
     function shouldShowToday(m, date) {
         const d = new Date(date); d.setHours(0,0,0,0);
         if (m.mode === 'everyother') {
-            const start = new Date(m.startDate || 0); start.setHours(0,0,0,0);
+            const start = new Date(m.startDate); start.setHours(0,0,0,0);
             return Math.round((d - start) / 86400000) % 2 === 0;
         }
         return m.days.length === 0 || m.days.includes(d.getDay());
@@ -147,26 +222,26 @@
 
     function saveMedicine() {
         const name = document.getElementById('f-nazev').value;
-        const time = document.getElementById('f-time').value;
         const id = document.getElementById('f-id').value;
-        if(!name || !time) return alert("Jméno a čas!");
+        const icon = document.querySelector('input[name="f-icon"]:checked').value;
+        let times = Array.from(document.querySelectorAll(".time-checkbox:checked")).map(c => c.value);
+        if(document.getElementById('f-custom-time').value) times.push(document.getElementById('f-custom-time').value);
+        times = [...new Set(times)].sort();
+        if(!name || times.length === 0) return alert("Zadej jméno a čas!");
 
         let meds = load(DB_KEY);
-        const medObj = {
-            id: id ? parseInt(id) : Date.now(),
-            name, time,
-            icon: document.querySelector('input[name="f-icon"]:checked').value,
-            stock: parseFloat(document.getElementById('f-zasoba').value) || 0,
-            dose: parseFloat(document.getElementById('f-davka').value) || 1,
-            mode: document.querySelector('input[name="mode"]:checked').value,
-            days: Array.from(document.querySelectorAll(".day-checkbox:checked")).map(c => parseInt(c.value)),
-            startDate: id ? meds.find(x=>x.id==id).startDate : new Date().toISOString()
+        const medObj = { 
+            id: id ? parseInt(id) : Date.now(), 
+            name, icon, 
+            stock: parseFloat(document.getElementById('f-zasoba').value) || 0, 
+            dose: parseFloat(document.getElementById('f-davka').value) || 1, 
+            times, 
+            mode: document.querySelector('input[name="mode"]:checked').value, 
+            days: Array.from(document.querySelectorAll(".day-checkbox:checked")).map(c => parseInt(c.value)), 
+            startDate: document.getElementById('f-start-date').value || new Date().toISOString() 
         };
-
         if(id) meds = meds.map(m => m.id == id ? medObj : m); else meds.push(medObj);
-        save(DB_KEY, meds);
-        resetForm();
-        render();
+        save(DB_KEY, meds); resetForm(); render();
     }
 
     function render() {
@@ -177,85 +252,148 @@
 
         meds.forEach(m => {
             if(!shouldShowToday(m, new Date())) return;
-            const done = hist.some(h => h.medId === m.id && h.date === todayStr);
-            if(!done) rem++;
+            const expiry = calculateExpiry(m);
+            let timesHtml = "";
+            m.times.forEach(t => {
+                const done = hist.some(h => h.medId === m.id && h.date === todayStr && h.time === t);
+                if(!done) rem++;
+                timesHtml += `<div class="flex justify-between items-center py-2 border-b border-black/5 last:border-0 ${done?'taken-row':''}">
+                    <span class="font-bold text-sm">${t}</span>
+                    ${done ? '<span class="text-green-600 font-black text-[10px]">OK</span>' : `<button onclick="take(${m.id},'${t}')" class="neu-btn px-4 py-1 text-[10px] font-black uppercase">Vzít</button>`}
+                </div>`;
+            });
 
-            list.innerHTML += `<div class="neu-raised p-4 flex items-center gap-4 ${done?'taken-row':''}">
-                <div class="neu-inset p-3"><span class="iconify" data-icon="${m.icon}"></span></div>
-                <div class="flex-1">
-                    <h3 class="font-bold">${m.name}</h3>
-                    <p class="text-[11px] font-bold opacity-40">${m.time} | Dávka: ${m.dose}ks | Sklad: ${m.stock}</p>
+            list.innerHTML += `<div class="neu-raised p-6">
+                <div class="flex gap-4 items-center mb-4">
+                    <div class="neu-inset p-3"><span class="iconify text-xl" data-icon="${m.icon}"></span></div>
+                    <div class="flex-1"><h3 class="font-black text-xl">${m.name}</h3><p class="text-[10px] font-bold opacity-50 uppercase">Sklad: ${m.stock} ks</p></div>
+                    <button onclick="editMed(${m.id})" class="text-slate-400 p-2"><span class="iconify" data-icon="lucide:edit-3"></span></button>
+                    <button onclick="deleteMed(${m.id})" class="text-red-300 p-2"><span class="iconify" data-icon="lucide:trash-2"></span></button>
                 </div>
-                ${done ? '✅' : `<button onclick="take(${m.id})" class="neu-btn px-4 text-xs">VZÍT</button>`}
-                <button onclick="editMed(${m.id})" class="opacity-20 text-xs">edit</button>
+                <div class="neu-inset p-3 mb-3">${timesHtml}</div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[9px] font-black uppercase px-2 py-1 rounded-full bg-black/5 ${expiry.critical?'text-red-500':''}">Dojde: ${expiry.dateStr || expiry}</span>
+                    <button onclick="addCustomStock(${m.id})" class="text-[9px] font-bold opacity-50 uppercase">+ Doplnit</button>
+                </div>
             </div>`;
         });
         document.getElementById('stat-rem').innerText = rem;
+        checkAllNotifs(meds, hist);
     }
 
-    window.take = (id) => {
-        let meds = load(DB_KEY); let m = meds.find(x => x.id === id);
+    function checkAllNotifs(meds, hist) {
+        const now = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
+        const todayStr = new Date().toLocaleDateString('cs-CZ');
+        meds.forEach(m => {
+            if(shouldShowToday(m, new Date()) && m.times.includes(now)) {
+                if(!hist.some(h => h.medId === m.id && h.date === todayStr && h.time === now)) {
+                    sendNotification("Čas na lék: " + m.name, "Dávka: " + m.dose + " ks");
+                }
+            }
+        });
+    }
+
+    window.take = (medId, time) => {
+        let meds = load(DB_KEY); let m = meds.find(x => x.id === medId);
         m.stock = Math.round((m.stock - m.dose) * 100) / 100;
-        let hist = load(HIST_KEY);
-        hist.push({ medId: id, date: new Date().toLocaleDateString('cs-CZ'), time: new Date().toLocaleTimeString() });
+        let hist = load(HIST_KEY); hist.push({ medId, time, date: new Date().toLocaleDateString('cs-CZ') });
         save(DB_KEY, meds); save(HIST_KEY, hist); render();
-    };
+    }
+
+    window.addCustomStock = (medId) => {
+        const amount = prompt("Kolik přidat?");
+        if (amount) {
+            let meds = load(DB_KEY); meds.find(x => x.id === medId).stock += parseFloat(amount);
+            save(DB_KEY, meds); render();
+        }
+    }
+
+    window.takeAllToday = () => {
+        let meds = load(DB_KEY); let hist = load(HIST_KEY);
+        const todayStr = new Date().toLocaleDateString('cs-CZ');
+        meds.forEach(m => {
+            if(shouldShowToday(m, new Date())) {
+                m.times.forEach(t => {
+                    if(!hist.some(h => h.medId === m.id && h.date === todayStr && h.time === t)) {
+                        m.stock = Math.round((m.stock - m.dose) * 100) / 100;
+                        hist.push({ medId: m.id, time: t, date: todayStr });
+                    }
+                });
+            }
+        });
+        save(DB_KEY, meds); save(HIST_KEY, hist); render();
+    }
+
+    function renderCalendar() {
+        const body = document.getElementById('calendar-body'); body.innerHTML = "";
+        const meds = load(DB_KEY); const hist = load(HIST_KEY);
+        const y = viewDate.getFullYear(), m = viewDate.getMonth();
+        document.getElementById('month-label').innerText = new Intl.DateTimeFormat('cs-CZ', {month:'long', year:'numeric'}).format(viewDate);
+        const first = (new Date(y, m, 1).getDay() + 6) % 7;
+        for(let i=0; i < first; i++) body.innerHTML += `<div></div>`;
+        for(let d=1; d <= new Date(y, m+1, 0).getDate(); d++) {
+            const dStr = new Date(y, m, d).toLocaleDateString('cs-CZ');
+            const taken = hist.filter(h => h.date === dStr).length;
+            body.innerHTML += `<div onclick="showDayDetail('${dStr}', ${new Date(y,m,d).getTime()})" class="cal-day neu-btn text-xs ${taken>0?'border-green-500':''}">${d}</div>`;
+        }
+    }
+
+    function showDayDetail(dStr, ts) {
+        const det = document.getElementById('day-detail'); det.classList.remove('hidden');
+        const list = document.getElementById('detail-list'); list.innerHTML = "";
+        document.getElementById('detail-date').innerText = dStr;
+        const meds = load(DB_KEY); const hist = load(HIST_KEY);
+        meds.filter(m => shouldShowToday(m, new Date(ts))).forEach(m => {
+            m.times.forEach(t => {
+                const ok = hist.some(h => h.medId === m.id && h.date === dStr && h.time === t);
+                list.innerHTML += `<div class="neu-inset p-3 flex justify-between text-xs"><span>${t} - ${m.name}</span><span>${ok?'✅':'❌'}</span></div>`;
+            });
+        });
+    }
 
     window.editMed = (id) => {
         const m = load(DB_KEY).find(x => x.id === id);
         document.getElementById('f-id').value = m.id;
         document.getElementById('f-nazev').value = m.name;
-        document.getElementById('f-time').value = m.time;
         document.getElementById('f-zasoba').value = m.stock;
         document.getElementById('f-davka').value = m.dose;
-        document.getElementById('m-days').checked = m.mode === 'days';
-        document.getElementById('m-ob').checked = m.mode === 'everyother';
-        document.querySelectorAll(".day-checkbox").forEach(c => c.checked = m.days.includes(parseInt(c.value)));
-        toggleMode();
-        window.scrollTo(0, 0);
-    };
+        document.querySelectorAll(".time-checkbox").forEach(c => c.checked = m.times.includes(c.value));
+        document.getElementById('form-container').classList.add('editing-mode');
+        document.getElementById('btn-cancel').classList.remove('hidden');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
 
     function resetForm() {
         document.getElementById('f-id').value = ""; document.getElementById('f-nazev').value = "";
-        document.getElementById('f-time').value = "";
+        document.querySelectorAll(".time-checkbox, .day-checkbox").forEach(c => c.checked = false);
+        document.getElementById('form-container').classList.remove('editing-mode');
+        document.getElementById('btn-cancel').classList.add('hidden');
     }
 
-    function renderCalendar() {
-        const body = document.getElementById('calendar-body'); body.innerHTML = "";
-        const hist = load(HIST_KEY);
-        const y = viewDate.getFullYear(), m = viewDate.getMonth();
-        document.getElementById('month-label').innerText = new Intl.DateTimeFormat('cs-CZ', {month:'long', year:'numeric'}).format(viewDate);
-        
-        const first = (new Date(y, m, 1).getDay() + 6) % 7;
-        for(let i=0; i < first; i++) body.innerHTML += `<div></div>`;
-        
-        for(let d=1; d <= new Date(y, m+1, 0).getDate(); d++) {
-            const dStr = new Date(y, m, d).toLocaleDateString('cs-CZ');
-            const hasData = hist.some(h => h.date === dStr);
-            body.innerHTML += `<div onclick="showDetail('${dStr}')" class="cal-day neu-btn ${hasData?'border-green-500 border':''}">
-                ${d}${hasData?'<div class="cal-dot"></div>':''}
-            </div>`;
-        }
-    }
-
-    function showDetail(dStr) {
-        const det = document.getElementById('day-detail'); det.classList.remove('hidden');
-        document.getElementById('detail-date').innerText = dStr;
-        const meds = load(DB_KEY);
-        const hList = load(HIST_KEY).filter(h => h.date === dStr);
-        const list = document.getElementById('detail-list');
-        list.innerHTML = hList.length ? "" : "Žádný záznam";
-        hList.forEach(h => {
-            const m = meds.find(x => x.id === h.medId);
-            list.innerHTML += `<div class="flex justify-between border-b border-black/5 py-1"><span>${m?m.name:'Smazáno'}</span><span class="opacity-40">${h.time}</span></div>`;
-        });
-    }
-
-    function changeMonth(n) { viewDate.setMonth(viewDate.getMonth() + n); renderCalendar(); }
-    function requestNotif() { Notification.requestPermission(); }
-    setInterval(() => { document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'}); }, 1000);
+    window.deleteMed = (id) => confirm("Smazat?") && (save(DB_KEY, load(DB_KEY).filter(x => x.id != id)), render());
+    function changeMonth(d) { viewDate.setMonth(viewDate.getMonth() + d); renderCalendar(); }
     
-    if(localStorage.getItem('dark-mode') === 'true') document.body.classList.add('dark');
+    setInterval(() => {
+        document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
+        if(new Date().getSeconds() === 0) render(); 
+    }, 1000);
+
+    function exportJSON() {
+        const data = JSON.stringify({meds: load(DB_KEY), hist: load(HIST_KEY)});
+        const blob = new Blob([data], {type: "application/json"});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "lekovka_zaloha.json"; a.click();
+    }
+
+    function importJSON(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const data = JSON.parse(ev.target.result);
+            save(DB_KEY, data.meds); save(HIST_KEY, data.hist);
+            location.reload();
+        };
+        reader.readAsText(e.target.files[0]);
+    }
+
     render();
 </script>
 </body>
