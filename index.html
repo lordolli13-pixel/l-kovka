@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
     <title>Lékovka ULTIMATE 2026 - Sand Edition</title>
     <link rel="apple-touch-icon" href="https://api.iconify.design/lucide:pill.png?color=%238b8071&width=180">
     
@@ -14,12 +14,11 @@
             --bg: #f0ede9; --shadow-light: #ffffff; --shadow-dark: #d1ccc3; 
             --primary: #434343; --accent: #8b8071; --text: #4a4541;
         }
-        /* Definice pro Tmavý režim */
         .dark {
             --bg: #2d2a27; --shadow-light: #3a3632; --shadow-dark: #201e1b;
             --primary: #e8ece8; --accent: #b0a496; --text: #d6d2cd;
         }
-        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text); min-height: 100vh; transition: 0.3s; }
+        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text); min-height: 100vh; transition: 0.3s; -webkit-tap-highlight-color: transparent; }
         .neu-raised { background: var(--bg); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); border-radius: 20px; border: 2px solid transparent; }
         .neu-inset { background: var(--bg); box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); border-radius: 12px; }
         .neu-btn { background: var(--bg); box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); cursor: pointer; border: none; transition: 0.2s; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text); }
@@ -30,7 +29,7 @@
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
         .cal-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 700; border: 2px solid transparent; cursor: pointer; }
         .hidden { display: none !important; }
-        input { border: none; outline: none; background: transparent; width: 100%; font-weight: 600; padding: 4px; color: var(--primary); }
+        input { border: none; outline: none; background: transparent; width: 100%; font-weight: 600; padding: 4px; color: var(--primary); font-size: 16px; /* Zamezí zoomování na iOS */ }
         .taken-row { opacity: 0.4; text-decoration: line-through; }
         .text-accent { color: var(--accent); }
     </style>
@@ -106,7 +105,8 @@
 
         <div class="mt-12 neu-raised p-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <h3 class="font-black text-xs uppercase opacity-40 tracking-widest">Správa dat a záloha</h3>
-            <div class="flex gap-4">
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button onclick="testNotification()" class="neu-btn px-6 py-2 text-[10px] font-bold uppercase text-blue-500 border border-blue-200">Test Notifikace</button>
                 <button onclick="exportJSON()" class="neu-btn px-6 py-2 text-[10px] font-bold uppercase">Export</button>
                 <label class="neu-btn px-6 py-2 text-[10px] font-bold cursor-pointer uppercase">Import <input type="file" class="hidden" onchange="importJSON(event)"></label>
             </div>
@@ -138,13 +138,11 @@
     const daysName = ["Ne","Po","Út","St","Čt","Pá","So"];
     let viewDate = new Date();
 
-    // Inicializace tmavého režimu
     if (localStorage.getItem('dark-mode') === 'true') {
         document.body.classList.add('dark');
         document.getElementById('dark-icon').setAttribute('data-icon', 'lucide:sun');
     }
 
-    // Generování dnů v týdnu pro formulář
     const dBox = document.getElementById('f-days-box');
     [1,2,3,4,5,6,0].forEach(d => {
         dBox.innerHTML += `<input type="checkbox" id="d-${d}" value="${d}" class="hidden day-checkbox"><label for="d-${d}" class="w-8 h-8 flex items-center justify-center rounded-full text-[10px] font-bold cursor-pointer neu-btn">${daysName[d]}</label>`;
@@ -234,7 +232,6 @@
                 </div>`;
             });
 
-            // BAREVNÉ SKLADY
             let stockColor = "text-green-600";
             if(m.stock < 10) stockColor = "text-red-500";
             else if(m.stock < 25) stockColor = "text-orange-500";
@@ -244,6 +241,7 @@
                     <div class="neu-inset p-3"><span class="iconify text-xl" data-icon="${m.icon || 'lucide:pill'}"></span></div>
                     <div class="flex-1"><h3 class="font-black text-xl">${m.name}</h3><p class="text-[10px] font-bold ${stockColor} uppercase">Sklad: ${m.stock} ks</p></div>
                     <button onclick="editMed(${m.id})" class="text-slate-400 p-2"><span class="iconify" data-icon="lucide:edit-3"></span></button>
+                    <button onclick="deleteMed(${m.id})" class="text-red-300 p-2"><span class="iconify" data-icon="lucide:trash-2"></span></button>
                 </div>
                 <div class="neu-inset p-3 mb-3">${timesHtml}</div>
                 <div class="flex justify-between items-center">
@@ -256,7 +254,26 @@
         checkNotif(meds, hist);
     }
 
-    function requestNotif() { Notification.requestPermission(); }
+    function requestNotif() { 
+        Notification.requestPermission().then(permission => {
+            if(permission === "granted") alert("Oznámení povolena!");
+            else alert("Oznámení byla zamítnuta. Zkontroluj nastavení telefonu.");
+        });
+    }
+
+    function testNotification() {
+        if(Notification.permission !== "granted") {
+            alert("Nejdřív klikni na zvonek a povol oznámení!");
+            return;
+        }
+        alert("Zkušební notifikace přijde za 5 sekund. Zkus teď aplikaci minimalizovat.");
+        setTimeout(() => {
+            new Notification("Lékovka: TEST", {
+                body: "Takhle vypadá upozornění na vaše léky!",
+                icon: "https://api.iconify.design/lucide:pill.png?color=%238b8071"
+            });
+        }, 5000);
+    }
     
     function checkNotif(meds, hist) {
         const now = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
@@ -264,7 +281,9 @@
         meds.forEach(m => {
             if(shouldShowToday(m, new Date()) && m.times.includes(now)) {
                 if(!hist.some(h => h.medId === m.id && h.date === todayStr && h.time === now)) {
-                    if(Notification.permission === "granted") new Notification("Lékovka: Čas na " + m.name);
+                    if(Notification.permission === "granted") {
+                        new Notification("Lékovka: Čas na " + m.name, { icon: "https://api.iconify.design/lucide:pill.png?color=%238b8071" });
+                    }
                 }
             }
         });
