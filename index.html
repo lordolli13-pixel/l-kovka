@@ -43,7 +43,7 @@
             <button onclick="switchTab('today')" id="tab-today" class="neu-btn px-6 md:px-8 py-4 font-bold active gap-2 text-xs md:text-base"><span class="iconify" data-icon="lucide:pill"></span> DNES</button>
             <button onclick="switchTab('calendar')" id="tab-calendar" class="neu-btn px-6 md:px-8 py-4 font-bold gap-2 text-xs md:text-base"><span class="iconify" data-icon="lucide:calendar-check"></span> HISTORIE</button>
         </div>
-        <button onclick="requestNotif()" class="neu-btn p-3 text-accent"><span class="iconify" data-icon="lucide:bell"></span></button>
+        <button onclick="requestNotif()" class="neu-btn p-3"><span class="iconify" data-icon="lucide:bell"></span></button>
     </div>
 
     <div id="view-today">
@@ -138,13 +138,16 @@
     const daysName = ["Ne","Po","Út","St","Čt","Pá","So"];
     let viewDate = new Date();
 
-    // Inicializace
+    // SERVICE WORKER REGISTRACE
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(() => console.log("SW OK"));
+    }
+
     if (localStorage.getItem('dark-mode') === 'true') {
         document.body.classList.add('dark');
         document.getElementById('dark-icon').setAttribute('data-icon', 'lucide:sun');
     }
 
-    // Generování checkboxů pro dny
     const dBox = document.getElementById('f-days-box');
     [1,2,3,4,5,6,0].forEach(d => {
         dBox.innerHTML += `<input type="checkbox" id="d-${d}" value="${d}" class="hidden day-checkbox"><label for="d-${d}" class="w-8 h-8 flex items-center justify-center rounded-full text-[10px] font-bold cursor-pointer neu-btn">${daysName[d]}</label>`;
@@ -168,8 +171,6 @@
     function switchTab(t) {
         document.getElementById('view-today').classList.toggle('hidden', t !== 'today');
         document.getElementById('view-calendar').classList.toggle('hidden', t !== 'calendar');
-        document.querySelectorAll('.neu-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + t).classList.add('active');
         if(t === 'calendar') renderCalendar();
     }
 
@@ -178,7 +179,7 @@
         let dailyAvg = 0;
         if (m.mode === 'everyother') dailyAvg = (m.times.length * m.dose) / 2;
         else dailyAvg = ((m.days.length || 7) * m.times.length * m.dose) / 7;
-        if (dailyAvg === 0) return "∞";
+        if (dailyAvg === 0) return "0";
         const daysLeft = Math.floor(m.stock / dailyAvg);
         const expDate = new Date(); expDate.setDate(expDate.getDate() + daysLeft);
         return { dateStr: expDate.toLocaleDateString('cs-CZ'), critical: daysLeft < 4 };
@@ -187,9 +188,8 @@
     function shouldShowToday(m, date) {
         const d = new Date(date); d.setHours(0,0,0,0);
         if (m.mode === 'everyother') {
-            const start = new Date(m.startDate || new Date()); start.setHours(0,0,0,0);
-            const diffDays = Math.floor((d - start) / 86400000);
-            return diffDays % 2 === 0;
+            const start = new Date(m.startDate); start.setHours(0,0,0,0);
+            return Math.round((d - start) / 86400000) % 2 === 0;
         }
         return m.days.length === 0 || m.days.includes(d.getDay());
     }
@@ -199,11 +199,9 @@
         const id = document.getElementById('f-id').value;
         const icon = document.querySelector('input[name="f-icon"]:checked').value;
         let times = Array.from(document.querySelectorAll(".time-checkbox:checked")).map(c => c.value);
-        const customT = document.getElementById('f-custom-time').value;
-        if(customT) times.push(customT);
+        if(document.getElementById('f-custom-time').value) times.push(document.getElementById('f-custom-time').value);
         times = [...new Set(times)].sort();
-        
-        if(!name || times.length === 0) { alert("Zadej název a aspoň jeden čas!"); return; }
+        if(!name || times.length === 0) return alert("Zadej název a čas!");
 
         let meds = load(DB_KEY);
         const mode = document.querySelector('input[name="mode"]:checked').value;
@@ -216,7 +214,6 @@
             days: Array.from(document.querySelectorAll(".day-checkbox:checked")).map(c => parseInt(c.value)), 
             startDate: document.getElementById('f-start-date').value || new Date().toISOString() 
         };
-
         if(id) meds = meds.map(m => m.id == id ? medObj : m); else meds.push(medObj);
         save(DB_KEY, meds); resetForm(); render();
     }
@@ -241,8 +238,8 @@
             });
 
             let stockColor = "text-green-600";
-            if(m.stock < 5) stockColor = "text-red-500";
-            else if(m.stock < 15) stockColor = "text-orange-500";
+            if(m.stock < 10) stockColor = "text-red-500";
+            else if(m.stock < 25) stockColor = "text-orange-500";
 
             list.innerHTML += `<div class="neu-raised p-6">
                 <div class="flex gap-4 items-center mb-4">
@@ -260,21 +257,24 @@
         });
         document.getElementById('stat-rem').innerText = rem;
         checkNotif(meds, hist);
-        cleanupHistory(); // Automatické promazání starých dat
     }
 
     function requestNotif() { 
         Notification.requestPermission().then(permission => {
             if(permission === "granted") alert("Oznámení povolena!");
-            else alert("Oznámení zamítnuta. Povolte je v nastavení prohlížeče.");
+            else alert("Oznámení byla zamítnuta.");
         });
     }
 
     function testNotification() {
-        if(Notification.permission !== "granted") { alert("Povolte oznámení zvonkem!"); return; }
-        setTimeout(() => {
-            new Notification("Lékovka 2026", { body: "Test notifikace funguje!", icon: "https://api.iconify.design/lucide:pill.png" });
-        }, 3000);
+        if(Notification.permission !== "granted") { alert("Povolte oznámení!"); return; }
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'NOTIF',
+                title: "Lékovka: TEST",
+                body: "Takhle vypadá upozornění!"
+            });
+        }
     }
     
     function checkNotif(meds, hist) {
@@ -283,20 +283,32 @@
         meds.forEach(m => {
             if(shouldShowToday(m, new Date()) && m.times.includes(now)) {
                 if(!hist.some(h => h.medId === m.id && h.date === todayStr && h.time === now)) {
-                    if(Notification.permission === "granted") {
-                        new Notification("Čas na lék: " + m.name, { body: "Dávka: " + m.dose + "ks", icon: "https://api.iconify.design/lucide:pill.png" });
+                    if(Notification.permission === "granted" && navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({
+                            type: 'NOTIF',
+                            title: "Čas na " + m.name,
+                            body: "Nezapomeňte si vzít svou dávku (" + m.dose + "ks)."
+                        });
                     }
                 }
             }
         });
     }
 
-    function cleanupHistory() {
-        let hist = load(HIST_KEY);
-        if(hist.length > 500) { // Limit historie pro plynulost
-            hist = hist.slice(-300);
-            save(HIST_KEY, hist);
-        }
+    function exportJSON() {
+        const data = JSON.stringify({meds: load(DB_KEY), hist: load(HIST_KEY)});
+        const blob = new Blob([data], {type: "application/json"});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "lekarka_backup.json"; a.click();
+    }
+
+    function importJSON(e) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const data = JSON.parse(event.target.result);
+            save(DB_KEY, data.meds); save(HIST_KEY, data.hist);
+            location.reload();
+        };
+        reader.readAsText(e.target.files[0]);
     }
 
     window.take = (medId, time) => {
@@ -307,7 +319,7 @@
     }
 
     window.addCustomStock = (medId) => {
-        const amount = prompt("Kolik kusů přidat?");
+        const amount = prompt("Kolik kusů chcete přidat do skladu?");
         if (amount && !isNaN(amount)) {
             let meds = load(DB_KEY); meds.find(x => x.id === medId).stock += parseFloat(amount);
             save(DB_KEY, meds); render();
@@ -343,8 +355,8 @@
             const sched = meds.filter(med => shouldShowToday(med, dateObj));
             const total = sched.reduce((acc, curr) => acc + curr.times.length, 0);
             const taken = hist.filter(h => h.date === dStr).length;
-            let borderClass = total > 0 ? (taken >= total ? "border-green-500 bg-green-500/10" : (taken > 0 ? "border-orange-500" : "border-red-300")) : "";
-            body.innerHTML += `<div onclick="showDayDetail('${dStr}', ${dateObj.getTime()})" class="cal-day neu-btn text-xs border-2 ${borderClass}">${d}</div>`;
+            let b = total > 0 ? (taken >= total ? "border-green-500 bg-green-500/10" : (taken > 0 ? "border-orange-500" : "border-red-200")) : "";
+            body.innerHTML += `<div onclick="showDayDetail('${dStr}', ${dateObj.getTime()})" class="cal-day neu-btn text-xs border-2 ${b}">${d}</div>`;
         }
     }
 
@@ -379,34 +391,14 @@
 
     function resetForm() {
         document.getElementById('f-id').value = ""; document.getElementById('f-nazev').value = "";
-        document.getElementById('f-zasoba').value = 0; document.getElementById('f-davka').value = 1;
         document.querySelectorAll(".time-checkbox, .day-checkbox").forEach(c => c.checked = false);
-        document.getElementById('f-custom-time').value = "";
         document.getElementById('form-container').classList.remove('editing-mode');
         document.getElementById('btn-cancel').classList.add('hidden');
     }
 
-    window.deleteMed = (id) => confirm("Smazat lék?") && (save(DB_KEY, load(DB_KEY).filter(x => x.id != id)), render());
+    window.deleteMed = (id) => confirm("Opravdu smazat lék?") && (save(DB_KEY, load(DB_KEY).filter(x => x.id != id)), render());
     function changeMonth(d) { viewDate.setMonth(viewDate.getMonth() + d); renderCalendar(); }
     
-    function exportJSON() {
-        const data = JSON.stringify({meds: load(DB_KEY), hist: load(HIST_KEY)});
-        const blob = new Blob([data], {type: "application/json"});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "lekovka_zaloha.json"; a.click();
-    }
-
-    function importJSON(e) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const data = JSON.parse(event.target.result);
-                save(DB_KEY, data.meds); save(HIST_KEY, data.hist);
-                location.reload();
-            } catch(err) { alert("Chyba při importu!"); }
-        };
-        reader.readAsText(e.target.files[0]);
-    }
-
     setInterval(() => {
         document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'});
         if(new Date().getSeconds() === 0) render(); 
