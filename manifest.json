@@ -1,0 +1,16 @@
+{
+  "name": "Lékovka PRO 2026",
+  "short_name": "Lékovka",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#334155",
+  "theme_color": "#ffa500",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
