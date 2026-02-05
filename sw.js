@@ -1,33 +1,48 @@
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(registration => {
-        console.log('SW registrován');
-        // Registrace pro notifikace hned při načtení
-        return registration;
-      })
-      .catch(err => console.log('SW chyba', err));
-  });
+// Načtení stavu při startu
+let notifsActive = localStorage.getItem('notifs_active') === 'true';
+
+async function toggleNotif(active) {
+    if (active) {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+            notifsActive = true;
+            localStorage.setItem('notifs_active', 'true');
+            console.log("Notifikace povoleny");
+        } else {
+            alert("Povolte prosím oznámení v nastavení telefonu.");
+            notifsActive = false;
+            localStorage.setItem('notifs_active', 'false');
+        }
+    } else {
+        notifsActive = false;
+        localStorage.setItem('notifs_active', 'false');
+    }
+    updateNotifUI();
 }
 
-// Funkce pro testování notifikace přímo přes registrační objekt
-function testNotif() {
-  if (!("Notification" in window)) {
-    alert("Tento prohlížeč nepodporuje notifikace.");
-    return;
-  }
-  
-  Notification.requestPermission().then(permission => {
-    if (permission === "granted") {
-      navigator.serviceWorker.ready.then(registration => {
-        registration.showNotification("Lékovka PRO 2026", {
-          body: "Takhle vypadá aktivní upozornění!",
-          icon: "icon.png",
-          vibrate: [200, 100, 200]
-        });
-      });
-    } else {
-      alert("Notifikace jsou v systému zakázány. Povolte je v Nastavení -> Oznámení.");
-    }
-  });
+function updateNotifUI() {
+    const toggle = document.getElementById('notif-toggle');
+    if (toggle) toggle.checked = notifsActive;
+    
+    document.getElementById('notif-status').innerText = notifsActive ? "Aktivní" : "Vypnuto";
+    document.getElementById('notif-icon').setAttribute('data-icon', notifsActive ? 'lucide:bell' : 'lucide:bell-off');
 }
+
+// Opravená funkce testu, která funguje i v nainstalované aplikaci
+async function testNotif() {
+    if (!notifsActive) {
+        alert("Nejdříve zapněte upozornění vypínačem.");
+        return;
+    }
+
+    const reg = await navigator.serviceWorker.ready;
+    reg.showNotification("Lékovka PRO 2026", {
+        body: "Upozornění je nyní správně nastaveno!",
+        icon: "icon.png",
+        badge: "icon.png",
+        vibrate: [200, 100, 200]
+    });
+}
+
+// Volat při startu aplikace
+updateNotifUI();
