@@ -1,13 +1,15 @@
-self.addEventListener('install', (e) => self.skipWaiting());
-self.addEventListener('activate', (e) => self.clients.claim());
+const CACHE_NAME = 'lekovka-v26';
+const ASSETS = [
+  './',
+  'index.html',
+  'https://code.iconify.design/3/3.1.0/iconify.min.js',
+  'https://cdn.tailwindcss.com'
+];
 
-self.addEventListener('push', (event) => {
-  const options = {
-    body: 'Čas na vaše léky!',
-    icon: 'icon.png',
-    vibrate: [200, 100, 200],
-    tag: 'med-reminder',
-    renotify: true
-  };
-  event.waitUntil(self.registration.showNotification('Lékovka PRO', options));
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
+});
+
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
 });
