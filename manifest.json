@@ -1,15 +1,18 @@
 {
-  "name": "Lékovka PRO 2026",
   "short_name": "Lékovka",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#334155",
-  "theme_color": "#334155",
+  "name": "Lékovka PRO 2026",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/822/822143.png",
+      "type": "image/png",
       "sizes": "512x512",
-      "type": "image/png"
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "orientation": "portrait",
+  "description": "Profesionální správa léků a zásob."
 }
