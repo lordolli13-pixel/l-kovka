@@ -1,54 +1,38 @@
-// UPRAVENÁ FUNKCE PRO RUČNÍ PŘIDÁNÍ ČASU (automaticky zaměří pole)
-function addManualTime() { 
-    const t = document.getElementById('manual-time').value; 
-    if (t) { 
-        addTime(t); 
-        document.getElementById('manual-time').value = ''; 
-    } else {
-        alert("Nejdříve vyberte čas na hodinách!");
+// sw.js - Service Worker pro Lékovka PRO 2026
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(clients.claim());
+});
+
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SHOW_NOTIF') {
+        const title = event.data.title;
+        const options = {
+            body: event.data.body,
+            icon: 'https://cdn-icons-png.flaticon.com/512/3028/3028549.png',
+            badge: 'https://cdn-icons-png.flaticon.com/512/3028/3028549.png',
+            vibrate: [300, 100, 300],
+            data: { arrival: Date.now() },
+            actions: [{ action: 'open', title: 'Otevřít Lékovku' }]
+        };
+
+        event.waitUntil(
+            self.registration.showNotification(title, options)
+        );
     }
-}
+});
 
-// UPRAVENÁ FUNKCE SAVE, KTERÁ NEZAPOMENE NA RUČNĚ ZADANÝ ČAS
-function saveMed() {
-    const id = document.getElementById('edit-id').value;
-    const name = document.getElementById('f-name').value;
-    let timesVal = document.getElementById('f-times').value;
-    const manualT = document.getElementById('manual-time').value;
-
-    // POJISTKA: Pokud jsi vybral čas na hodinách, ale neklikl na "+ ČAS", 
-    // tato oprava ho tam přidá automaticky za tebe.
-    if (manualT) {
-        let current = timesVal ? timesVal.split(',').map(x => x.trim()).filter(x => x !== "") : [];
-        if (!current.includes(manualT)) {
-            current.push(manualT);
-            current.sort();
-            timesVal = current.join(', ');
-            document.getElementById('f-times').value = timesVal;
-        }
-    }
-
-    if (!name || !timesVal) {
-        return alert("Vyplňte název a alespoň jeden čas (nezapomeňte kliknout na + ČAS nebo vybrat čas na hodinách)!");
-    }
-
-    const data = { 
-        id: id ? parseInt(id) : Date.now(), 
-        name, 
-        stock: parseFloat(document.getElementById('f-stock').value) || 0, 
-        dose: parseFloat(document.getElementById('f-dose').value) || 1, 
-        type: currentType, 
-        times: timesVal.split(',').map(x => x.trim()).filter(x => x !== ""), 
-        obden: obdenType, 
-        days: Array.from(document.querySelectorAll('.day-chip.chip-active')).map(c => parseInt(c.dataset.day)), 
-        created: id ? meds.find(m => m.id == id).created : Date.now() 
-    };
-
-    if (id) { 
-        const idx = meds.findIndex(m => m.id == id); 
-        if(idx !== -1) meds[idx] = data; 
-    } else { meds.push(data); }
-    
-    cancelEdit(); 
-    update();
-}
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            for (const client of clientList) {
+                if ('focus' in client) return client.focus();
+            }
+            if (clients.openWindow) return clients.openWindow('/');
+        })
+    );
+});
