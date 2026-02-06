@@ -21,21 +21,17 @@
             --red: #ef4444; 
             --green: #22c55e; 
         }
-        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text-main); min-height: 100vh; padding: 16px; font-size: 16px; }
-        
+        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text-main); min-height: 100vh; padding: 16px; }
         .flat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; }
         .flat-input { background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); border-radius: 10px; }
-        .flat-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.2s; min-height: 48px; }
+        .flat-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.2s; }
         .flat-btn:active { transform: scale(0.96); background: var(--border); }
-        
         .btn-active { border-color: var(--accent); color: var(--accent); background: rgba(245, 158, 11, 0.1); }
         .btn-orange { background-color: var(--accent) !important; color: #0f172a !important; font-weight: 800; border: none; }
-        
         .hidden { display: none !important; }
-        .chip { padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; background: rgba(255,255,255,0.05); text-align: center; color: white; border: 1px solid var(--border); }
+        .chip { padding: 10px; border-radius: 10px; font-size: 10px; font-weight: 800; cursor: pointer; background: rgba(255,255,255,0.05); text-align: center; color: white; border: 1px solid var(--border); }
         .chip-active { border-color: var(--accent); color: var(--accent); background: rgba(245, 158, 11, 0.1); }
-        
-        .progress-container { width: 100%; height: 8px; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        .progress-container { width: 100%; height: 6px; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
         .progress-bar { height: 100%; transition: width 0.3s ease; }
     </style>
 </head>
@@ -43,109 +39,112 @@
 
 <div class="max-w-2xl mx-auto pb-10">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-accent font-black tracking-tighter text-3xl uppercase">Lékovka PRO</h1>
-        <div id="date-now" class="text-[12px] font-bold opacity-60 uppercase text-right"></div>
+        <h1 class="text-accent font-black tracking-tighter text-2xl uppercase">Lékovka PRO</h1>
+        <div id="date-now" class="text-[10px] font-bold opacity-50 uppercase text-right"></div>
     </div>
 
-    <div class="flex gap-2 mb-6">
-        <button onclick="switchTab('today')" id="tab-today" class="flat-btn flex-1 font-bold btn-active text-[13px] uppercase">Dnes</button>
-        <button onclick="switchTab('list')" id="tab-list" class="flat-btn flex-1 font-bold text-[13px] uppercase">Zásoby</button>
-        <button onclick="switchTab('stats')" id="tab-stats" class="flat-btn flex-1 font-bold text-[13px] uppercase">Historie</button>
+    <div class="flex gap-2 mb-4">
+        <button onclick="switchTab('today')" id="tab-today" class="flat-btn flex-1 py-4 font-bold btn-active text-[10px] uppercase">Dnes</button>
+        <button onclick="switchTab('list')" id="tab-list" class="flat-btn flex-1 py-4 font-bold text-[10px] uppercase">Zásoby</button>
+        <button onclick="switchTab('stats')" id="tab-stats" class="flat-btn flex-1 py-4 font-bold text-[10px] uppercase">Historie</button>
     </div>
 
     <div id="notif-bar" class="flex gap-2 mb-8 px-1">
-        <button id="btn-notif-req" onclick="requestNotificationPermission()" class="flat-btn flex-1 text-[11px] font-black uppercase hidden">🔔 Zapnout notifikace</button>
-        <button id="btn-notif-test" onclick="sendTestNotification()" class="flat-btn flex-1 text-[11px] font-black uppercase hidden">⚡ Test notifikace</button>
+        <button id="btn-notif-req" onclick="requestNotificationPermission()" class="flat-btn flex-1 py-2 text-[9px] font-black uppercase hidden">🔔 Zapnout notifikace</button>
+        <button id="btn-notif-test" onclick="sendTestNotification()" class="flat-btn flex-1 py-2 text-[9px] font-black uppercase hidden">⚡ Test notifikace</button>
     </div>
 
     <div id="view-today">
         <div id="global-critical-banner" class="hidden flat-card border-red-500 bg-red-500/10 p-4 mb-4 flex items-center gap-3 text-red-500 animate-pulse">
             <span class="iconify text-2xl" data-icon="lucide:alert-octagon"></span>
-            <div class="text-[14px] font-black uppercase">Pozor: Docházejí zásoby léků!</div>
+            <div class="text-[11px] font-black uppercase">Pozor: Docházejí zásoby léků!</div>
         </div>
         
         <div class="mb-6">
-            <h3 class="text-[11px] font-black uppercase opacity-50 tracking-widest mb-3 px-2">Rychlé označení</h3>
+            <h3 class="text-[10px] font-black uppercase opacity-40 tracking-widest mb-3 px-2">Rychlé označení podle času</h3>
             <div id="time-shortcuts" class="flex flex-wrap gap-2 px-1"></div>
         </div>
 
         <div class="flex justify-between items-center mb-4 px-2">
-            <h3 class="text-[11px] font-black uppercase opacity-50 tracking-widest">Dnešní přehled</h3>
-            <button id="btn-check-all" onclick="checkAllToday()" class="flat-btn px-4 h-10 min-h-0 text-[11px] font-black uppercase text-green-500 border-green-500/50 hidden">✓ Vše hotovo</button>
+            <h3 class="text-[10px] font-black uppercase opacity-40 tracking-widest">Dnešní přehled</h3>
+            <button id="btn-check-all" onclick="checkAllToday()" class="flat-btn px-4 py-2 text-[9px] font-black uppercase text-green-500 border-green-500/50 hidden">✓ Vše za celý den</button>
         </div>
-        <div id="daily-list" class="flex flex-col gap-4"></div>
+        <div id="daily-list" class="flex flex-col gap-3"></div>
     </div>
 
     <div id="view-list" class="hidden space-y-6">
         <div class="flat-card p-6">
-            <h2 id="form-title" class="text-accent font-black text-sm uppercase mb-6 text-center tracking-widest">Přidat nový lék</h2>
+            <h2 id="form-title" class="text-accent font-black text-xs uppercase mb-6 text-center tracking-widest">Přidat nový lék</h2>
             <input type="hidden" id="edit-id">
             <div class="space-y-4">
                 <div class="grid grid-cols-4 gap-2">
-                    <div class="chip type-chip chip-active" onclick="setType(this, 'pill')" data-type="pill"><span class="iconify text-2xl mb-1 mx-auto" data-icon="lucide:pill"></span>Tbl.</div>
-                    <div class="chip type-chip" onclick="setType(this, 'droplet')" data-type="droplet"><span class="iconify text-2xl mb-1 mx-auto" data-icon="lucide:droplets"></span>Kapky</div>
-                    <div class="chip type-chip" onclick="setType(this, 'syrup')" data-type="syrup"><span class="iconify text-2xl mb-1 mx-auto" data-icon="lucide:test-tube"></span>Sirup</div>
-                    <div class="chip type-chip" onclick="setType(this, 'syringe')" data-type="syringe"><span class="iconify text-2xl mb-1 mx-auto" data-icon="lucide:syringe"></span>Inj.</div>
+                    <div class="chip type-chip chip-active" onclick="setType(this, 'pill')" data-type="pill"><span class="iconify text-xl mb-1 mx-auto" data-icon="lucide:pill"></span>Tbl.</div>
+                    <div class="chip type-chip" onclick="setType(this, 'droplet')" data-type="droplet"><span class="iconify text-xl mb-1 mx-auto" data-icon="lucide:droplets"></span>Kapky</div>
+                    <div class="chip type-chip" onclick="setType(this, 'syrup')" data-type="syrup"><span class="iconify text-xl mb-1 mx-auto" data-icon="lucide:test-tube"></span>Sirup</div>
+                    <div class="chip type-chip" onclick="setType(this, 'syringe')" data-type="syringe"><span class="iconify text-xl mb-1 mx-auto" data-icon="lucide:syringe"></span>Inj.</div>
                 </div>
-                <div class="flat-input p-4"><input id="f-name" class="w-full bg-transparent font-bold text-white outline-none text-lg" type="text" placeholder="Název léku..."></div>
+                <div class="flat-input p-3"><input id="f-name" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="text" placeholder="Název léku..."></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="flat-input p-3"><label class="text-[10px] opacity-50 uppercase block mb-1">Celkem v balení</label><input id="f-stock" class="w-full bg-transparent font-bold text-white text-lg outline-none" type="number" step="0.25"></div>
-                    <div class="flat-input p-3"><label class="text-[10px] opacity-50 uppercase block mb-1">Dávka</label><input id="f-dose" class="w-full bg-transparent font-bold text-white text-lg outline-none" type="number" value="1" step="0.25"></div>
+                    <div class="flat-input p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Celkem v balení</label><input id="f-stock" class="w-full bg-transparent font-bold text-white outline-none" type="number" step="0.25" placeholder="0"></div>
+                    <div class="flat-input p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Užívaná dávka</label><input id="f-dose" class="w-full bg-transparent font-bold text-white outline-none" type="number" value="1" step="0.25"></div>
                 </div>
-                <div id="stock-add-section" class="hidden flat-input p-4 border-accent/40 bg-accent/5">
-                    <label class="text-[10px] font-black uppercase block mb-1 text-accent">Doplnit zásobu</label>
+                <div id="stock-add-section" class="hidden flat-input p-3 border-accent/40 bg-accent/5">
+                    <label class="text-[8px] font-black uppercase block mb-1 text-accent">Doplnit zásobu (přičíst)</label>
                     <div class="flex gap-2">
-                        <input id="f-add-val" class="w-full bg-transparent font-bold text-white outline-none text-lg" type="number" placeholder="Kolik?">
-                        <button onclick="addStockAction()" class="flat-btn px-6 py-1 text-[13px] font-black uppercase bg-accent text-slate-900 border-none">PŘIČÍST</button>
+                        <input id="f-add-val" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="number" placeholder="Kolik ks přišlo?">
+                        <button onclick="addStockAction()" class="flat-btn px-4 py-1 text-[10px] font-black uppercase bg-accent text-slate-900 border-none">PŘIČÍST</button>
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <div class="flat-input p-4"><label class="text-[10px] opacity-50 uppercase block mb-1">Naplánované časy</label><input id="f-times" class="w-full bg-transparent font-bold text-white outline-none text-base" type="text" readonly></div>
+                    <div class="flat-input p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Naplánované časy</label><input id="f-times" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="text" readonly placeholder="Vyberte časy..."></div>
                     <div class="grid grid-cols-3 gap-2">
-                        <button onclick="addTime('08:00')" class="flat-btn text-[11px] font-black uppercase">Ráno (8h)</button>
-                        <button onclick="addTime('12:00')" class="flat-btn text-[11px] font-black uppercase">Oběd (12h)</button>
-                        <button onclick="addTime('20:00')" class="flat-btn text-[11px] font-black uppercase">Večer (20h)</button>
+                        <button onclick="addTime('08:00')" class="flat-btn py-2 text-[9px] font-black uppercase">Ráno (8h)</button>
+                        <button onclick="addTime('12:00')" class="flat-btn py-2 text-[9px] font-black uppercase">Oběd (12h)</button>
+                        <button onclick="addTime('20:00')" class="flat-btn py-2 text-[9px] font-black uppercase">Večer (20h)</button>
                     </div>
                     <div class="flex gap-2">
-                        <input id="manual-time" type="time" class="flat-input bg-transparent text-white font-bold outline-none flex-1 px-4 py-2 text-lg">
-                        <button onclick="addManualTime()" class="flat-btn px-6 text-[12px] font-black uppercase">+ ČAS</button>
-                        <button onclick="document.getElementById('f-times').value=''" class="flat-btn px-4 text-red-500 text-[12px]">Smazat</button>
+                        <input id="manual-time" type="time" class="flat-input bg-transparent text-white font-bold outline-none flex-1 px-3 py-2 text-sm">
+                        <button onclick="addManualTime()" class="flat-btn px-4 py-2 text-[10px] font-black uppercase">+ ČAS</button>
+                        <button onclick="document.getElementById('f-times').value=''" class="flat-btn px-3 text-red-500 text-[10px]">Smazat</button>
                     </div>
                 </div>
-                <div class="space-y-3 pt-2">
+                <div class="space-y-3">
                     <div class="flex gap-2">
-                        <div id="btn-obden-sude" onclick="toggleObden('sude')" class="chip flex-1 py-4">OBDEN (SUDÉ)</div>
-                        <div id="btn-obden-liche" onclick="toggleObden('liche')" class="chip flex-1 py-4">OBDEN (LICHÉ)</div>
+                        <div id="btn-obden-sude" onclick="toggleObden('sude')" class="chip flex-1 py-3">OBDEN (SUDÉ)</div>
+                        <div id="btn-obden-liche" onclick="toggleObden('liche')" class="chip flex-1 py-3">OBDEN (LICHÉ)</div>
                     </div>
-                    <div class="grid grid-cols-7 gap-2" id="day-selector">
-                        <div class="chip day-chip h-12 flex items-center justify-center" data-day="1">P</div><div class="chip day-chip h-12 flex items-center justify-center" data-day="2">Ú</div><div class="chip day-chip h-12 flex items-center justify-center" data-day="3">S</div><div class="chip day-chip h-12 flex items-center justify-center" data-day="4">Č</div><div class="chip day-chip h-12 flex items-center justify-center" data-day="5">P</div><div class="chip day-chip h-12 flex items-center justify-center" data-day="6">S</div><div class="chip day-chip h-12 flex items-center justify-center" data-day="0">N</div>
+                    <div class="grid grid-cols-7 gap-1" id="day-selector">
+                        <div class="chip day-chip" data-day="1">P</div><div class="chip day-chip" data-day="2">Ú</div><div class="chip day-chip" data-day="3">S</div><div class="chip day-chip" data-day="4">Č</div><div class="chip day-chip" data-day="5">P</div><div class="chip day-chip" data-day="6">S</div><div class="chip day-chip" data-day="0">N</div>
                     </div>
                 </div>
-                <button onclick="saveMed()" class="flat-btn btn-orange w-full py-6 text-base font-black uppercase tracking-widest mt-4">Uložit lék</button>
-                <button onclick="cancelEdit()" id="cancel-btn" class="hidden w-full text-[12px] opacity-60 uppercase py-4">Zrušit a začít znovu</button>
+                <button onclick="saveMed()" class="flat-btn btn-orange w-full py-4 text-xs font-black uppercase tracking-widest">Uložit lék</button>
+                <button onclick="cancelEdit()" id="cancel-btn" class="hidden w-full text-[10px] opacity-50 uppercase py-2">Zrušit a začít znovu</button>
             </div>
         </div>
-        <div id="inventory-list" class="space-y-6 mt-8"></div>
+        <div id="inventory-list" class="space-y-4 mt-8"></div>
     </div>
 
     <div id="view-stats" class="hidden">
         <div class="flat-card p-6">
             <div class="flex justify-between items-center mb-6">
-                <button onclick="moveMonth(-1)" class="flat-btn p-3 h-auto"><span class="iconify text-xl" data-icon="lucide:chevron-left"></span></button>
-                <h2 id="calendar-month-year" class="text-accent font-black text-base uppercase tracking-widest"></h2>
-                <button onclick="moveMonth(1)" class="flat-btn p-3 h-auto"><span class="iconify text-xl" data-icon="lucide:chevron-right"></span></button>
+                <button onclick="moveMonth(-1)" class="flat-btn p-2"><span class="iconify" data-icon="lucide:chevron-left"></span></button>
+                <h2 id="calendar-month-year" class="text-accent font-black text-xs uppercase tracking-widest"></h2>
+                <button onclick="moveMonth(1)" class="flat-btn p-2"><span class="iconify" data-icon="lucide:chevron-right"></span></button>
             </div>
             <div id="calendar-grid" class="grid grid-cols-7 gap-2 mb-6 text-center"></div>
-            <div id="detail-list" class="flat-input p-4 space-y-4 text-[14px] min-h-[150px]">
-                <div class="text-center opacity-40 uppercase font-bold mt-8">Klikněte na den v kalendáři</div>
+            <div id="detail-list" class="flat-input p-4 space-y-2 text-[10px] min-h-[100px]">
+                <div class="text-center opacity-30 uppercase font-bold mt-4">Klikněte na den v kalendáři</div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    // --- REGISTRACE SERVICE WORKERU ---
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(reg => console.log("SW OK")).catch(err => console.log("SW Err", err));
+        navigator.serviceWorker.register('sw.js').then(reg => {
+            console.log("SW registrován");
+        }).catch(err => console.log("SW chyba:", err));
     }
 
     let meds = JSON.parse(localStorage.getItem('meds_v26_final')) || [];
@@ -171,16 +170,24 @@
         });
     }
 
-    function triggerSystemNotif(title, body) {
-        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIF', title, body });
-        } else {
-            new Notification(title, { body });
+    function sendTestNotification() {
+        if (Notification.permission === "granted") {
+            triggerSystemNotif("Lékovka PRO: Test", "Takhle vypadá připomenutí!");
         }
     }
 
-    function sendTestNotification() {
-        if (Notification.permission === "granted") triggerSystemNotif("Lékovka PRO: Test", "Notifikace fungují!");
+    // Funkce pro odeslání notifikace skrze Service Worker (funguje na pozadí)
+    function triggerSystemNotif(title, body) {
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'SHOW_NOTIF',
+                title: title,
+                body: body
+            });
+        } else {
+            // Fallback pokud SW ještě neběží
+            new Notification(title, { body: body });
+        }
     }
 
     function checkNotificationUI() {
@@ -200,6 +207,7 @@
         const currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
         const todayStr = now.toLocaleDateString('cs-CZ');
 
+        // Ochrana proti duplicitním notifikacím v jedné minutě
         if (lastNotifTime === currentTime) return;
 
         meds.forEach(m => {
@@ -235,7 +243,10 @@
     
     function toggleObden(type) { 
         if (obdenType === type) { obdenType = null; } 
-        else { obdenType = type; document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('chip-active')); }
+        else { 
+            obdenType = type; 
+            document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('chip-active')); 
+        }
         renderObdenButtons();
     }
 
@@ -245,7 +256,11 @@
     }
 
     document.querySelectorAll('.day-chip').forEach(chip => { 
-        chip.onclick = () => { obdenType = null; renderObdenButtons(); chip.classList.toggle('chip-active'); }; 
+        chip.onclick = () => { 
+            obdenType = null; 
+            renderObdenButtons();
+            chip.classList.toggle('chip-active'); 
+        }; 
     });
 
     function addStockAction() { 
@@ -264,22 +279,12 @@
     function saveMed() {
         const id = document.getElementById('edit-id').value;
         const name = document.getElementById('f-name').value;
-        let timesVal = document.getElementById('f-times').value;
-        const manualT = document.getElementById('manual-time').value;
-
-        if (manualT) {
-            let current = timesVal ? timesVal.split(',').map(x => x.trim()).filter(x => x !== "") : [];
-            if (!current.includes(manualT)) {
-                current.push(manualT); current.sort();
-                timesVal = current.join(', ');
-                document.getElementById('f-times').value = timesVal;
-            }
-        }
-
+        const timesVal = document.getElementById('f-times').value;
         if (!name || !timesVal) return alert("Vyplňte název a časy!");
 
         const data = { 
-            id: id ? parseInt(id) : Date.now(), name, 
+            id: id ? parseInt(id) : Date.now(), 
+            name, 
             stock: parseFloat(document.getElementById('f-stock').value) || 0, 
             dose: parseFloat(document.getElementById('f-dose').value) || 1, 
             type: currentType, 
@@ -289,8 +294,10 @@
             created: id ? meds.find(m => m.id == id).created : Date.now() 
         };
 
-        if (id) { const idx = meds.findIndex(m => m.id == id); if(idx !== -1) meds[idx] = data; } 
-        else { meds.push(data); }
+        if (id) { 
+            const idx = meds.findIndex(m => m.id == id); 
+            if(idx !== -1) meds[idx] = data; 
+        } else { meds.push(data); }
         cancelEdit(); update();
     }
 
@@ -390,21 +397,27 @@
                 dnyVydrze = Math.floor(m.stock / (denniDavka * koef)) || 0;
             }
 
+            const dnyNazvy = ["Ne","Po","Út","St","Čt","Pá","So"];
+            let planText = m.obden ? `Obden (${m.obden === 'sude' ? 'Sudé' : 'Liché'})` : (m.days.length > 0 ? m.days.map(d => dnyNazvy[d]).join(", ") : "Každý den");
+
             inv.innerHTML += `
-                <div class="flat-card p-4 flex flex-col gap-4" style="border-left-width: 8px; border-left-color: ${stockColorHex}">
+                <div class="flat-card p-4 flex flex-col gap-4" style="border-left-width: 6px; border-left-color: ${stockColorHex}">
                     <div class="flex justify-between items-center">
                         <div>
-                            <div class="font-black text-lg uppercase text-accent leading-tight">${m.name}</div>
-                            <div class="text-[13px] font-bold" style="color: ${stockColorHex}">SKLADEM: ${m.stock} ks</div>
+                            <div class="font-black text-sm uppercase text-accent">${m.name}</div>
+                            <div class="text-[10px] font-bold" style="color: ${stockColorHex}">SKLADEM: ${m.stock} ks (${statusText})</div>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editMed(${m.id})" class="flat-btn p-4 h-auto"><span class="iconify text-xl" data-icon="lucide:edit-3"></span></button>
+                            <button onclick="editMed(${m.id})" class="flat-btn p-3"><span class="iconify" data-icon="lucide:edit-3"></span></button>
+                            <button onclick="deleteMed(${m.id})" class="flat-btn p-3 text-red-500"><span class="iconify" data-icon="lucide:trash-2"></span></button>
                         </div>
                     </div>
                     <div class="px-1"><div class="progress-container"><div class="progress-bar" style="width: ${barWidth}%; background-color: ${stockColorHex}"></div></div></div>
-                    <div class="flat-input p-3 grid grid-cols-2 gap-2 text-[11px] font-bold uppercase">
-                        <div class="flex flex-col border-r border-white/10"><span class="opacity-50 text-[9px] mb-1">Časy</span><span>${m.times.join(", ")}</span></div>
-                        <div class="flex flex-col pl-2"><span class="opacity-50 text-[9px] mb-1">Výdrž</span><span class="${dnyVydrze <= 5 ? 'text-red-500 animate-pulse' : 'text-green-500'}">${dnyVydrze} dní</span></div>
+                    <div class="flat-input p-3 grid grid-cols-2 gap-2 text-[9px] font-bold uppercase">
+                        <div class="flex flex-col border-r border-white/5"><span class="opacity-40 text-[7px] mb-1">Dávka</span><span>${m.times.join(", ")} • ${m.dose}ks</span></div>
+                        <div class="flex flex-col pl-2"><span class="opacity-40 text-[7px] mb-1">Plán</span><span>${planText}</span></div>
+                        <div class="flex flex-col border-r border-white/5 mt-2 pt-2 border-t border-white/5"><span class="opacity-40 text-[7px] mb-1">Denně</span><span>${denniDavka} ks</span></div>
+                        <div class="flex flex-col pl-2 mt-2 pt-2 border-t border-white/5"><span class="opacity-40 text-[7px] mb-1">Výdrž</span><span class="${dnyVydrze <= 5 ? 'text-red-500 animate-pulse' : 'text-green-500'}">${dnyVydrze} dní</span></div>
                     </div>
                 </div>`;
 
@@ -418,7 +431,7 @@
 
         Array.from(uniqueTimes).sort().forEach(t => {
             if (schedule.some(item => item.time === t && !item.taken)) {
-                timeShortcuts.innerHTML += `<button onclick="checkAllByTime('${t}')" class="flat-btn px-4 h-11 text-[12px] font-black border-green-500/30 text-green-500">✓ Vše v ${t}</button>`;
+                timeShortcuts.innerHTML += `<button onclick="checkAllByTime('${t}')" class="flat-btn px-3 py-2 text-[10px] font-black border-green-500/30 text-green-500">✓ Vše v ${t}</button>`;
             }
         });
 
@@ -427,45 +440,43 @@
         schedule.sort((a,b) => a.time.localeCompare(b.time)).forEach(item => {
             const iconMap = {pill:'lucide:pill', droplet:'lucide:droplets', syrup:'lucide:test-tube', syringe:'lucide:syringe'};
             daily.innerHTML += `
-                <div class="flat-card p-5 flex items-center justify-between ${item.taken ? 'opacity-30 grayscale' : ''}">
-                    <div class="flex items-center gap-4">
-                        <div class="flat-input p-3 text-accent border-none"><span class="iconify text-3xl" data-icon="${iconMap[item.type] || 'lucide:pill'}"></span></div>
-                        <div>
-                            <div class="font-black text-xl leading-tight">${item.name}</div>
-                            <div class="text-base font-bold text-accent">${item.time} • ${item.dose} ks</div>
-                        </div>
+                <div class="flat-card p-4 flex items-center justify-between ${item.taken ? 'opacity-30 grayscale' : ''}">
+                    <div class="flex items-center gap-3">
+                        <div class="flat-input p-3 text-accent border-none"><span class="iconify text-xl" data-icon="${iconMap[item.type] || 'lucide:pill'}"></span></div>
+                        <div><div class="font-black text-sm">${item.name}</div><div class="text-xs font-bold text-accent">${item.time} • ${item.dose} ks</div></div>
                     </div>
-                    ${!item.taken ? `<button onclick="takeMed(${item.id},'${item.time}')" class="flat-btn btn-orange px-8 h-14 text-[15px] font-black uppercase">Vzít</button>` : '<span class="iconify text-4xl text-green-500" data-icon="lucide:check-circle"></span>'}
+                    ${!item.taken ? `<button onclick="takeMed(${item.id},'${item.time}')" class="flat-btn btn-orange px-6 py-3 text-[10px] font-black uppercase">Vzít</button>` : '<span class="iconify text-2xl text-green-500" data-icon="lucide:check-circle"></span>'}
                 </div>`;
         });
         document.getElementById('global-critical-banner').classList.toggle('hidden', !globalCrit);
-        if(!document.getElementById('view-stats').classList.contains('hidden')) renderCalendar();
+        if(document.getElementById('view-stats').classList.contains('hidden') === false) renderCalendar();
     }
 
     function renderCalendar() { 
         const grid = document.getElementById('calendar-grid'); grid.innerHTML = ''; 
         document.getElementById('calendar-month-year').innerText = `${viewDate.toLocaleString('cs-CZ', {month:'long'})} ${viewDate.getFullYear()}`; 
         const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate(); 
+        
         for (let i = 1; i <= daysInMonth; i++) { 
             const dateObj = new Date(viewDate.getFullYear(), viewDate.getMonth(), i); 
             const dStr = dateObj.toLocaleDateString('cs-CZ'); 
             const records = history.filter(h => h.date === dStr).length; 
             const planned = meds.some(m => isMedScheduledForDate(m, dateObj));
             let dayStyle = records > 0 ? 'bg-green-500/20 text-green-400 font-bold border-green-500/40' : (planned ? 'text-accent border-accent/30' : 'text-white/20');
-            grid.innerHTML += `<div onclick="showDetail('${dStr}')" class="aspect-square flex flex-col items-center justify-center rounded-lg border ${dayStyle} text-sm transition-all active:scale-95">${i}${records>0?'<span class="text-[8px]">●</span>':''}</div>`; 
+            grid.innerHTML += `<div onclick="showDetail('${dStr}')" class="aspect-square flex flex-col items-center justify-center rounded-lg cursor-pointer border ${dayStyle} text-xs transition-all active:scale-95">${i}${records>0?'<span class="text-[6px]">●</span>':''}</div>`; 
         } 
     }
     
     function showDetail(dStr) { 
         const list = document.getElementById('detail-list'); const items = history.filter(h => h.date === dStr); 
-        list.innerHTML = `<div class="font-black text-accent mb-4 uppercase text-center border-b border-white/10 pb-3 text-base">${dStr}</div>`; 
+        list.innerHTML = `<div class="font-black text-accent mb-4 uppercase text-center border-b border-white/5 pb-2">${dStr}</div>`; 
         const parts = dStr.split('.'); const target = new Date(parts[2], parts[1]-1, parts[0]); 
         let all = []; meds.forEach(m => { if (isMedScheduledForDate(m, target)) m.times.forEach(t => all.push({ ...m, time: t })); }); 
         items.forEach(h => { if(!all.some(e => e.id === h.medId && e.time === h.time)) { const m = meds.find(x => x.id === h.medId) || { name: "[Smazáno]", id: h.medId }; all.push({...m, time: h.time}); } }); 
         if (all.length === 0) { list.innerHTML += "<div class='text-center opacity-30'>Žádné záznamy</div>"; return; }
         all.sort((a,b) => a.time.localeCompare(b.time)).forEach(exp => { 
             const taken = items.find(h => h.medId === exp.id && h.time === exp.time); 
-            list.innerHTML += `<div class="flex justify-between items-center py-3 border-b border-white/5 ${taken ? 'text-green-400' : 'text-red-400'}"><div class="flex flex-col"><span class="font-bold text-base">${exp.name}</span><span class="opacity-60 text-[11px] uppercase">${exp.time}</span></div><div class="flex items-center gap-2"><span class="text-[11px] font-black uppercase">${taken ? 'VZAL' : 'NEVZAL'}</span><span class="iconify text-xl" data-icon="${taken ? 'lucide:check-circle' : 'lucide:x-circle'}"></span></div></div>`; 
+            list.innerHTML += `<div class="flex justify-between items-center py-2 border-b border-white/5 ${taken ? 'text-green-400' : 'text-red-400'}"><div class="flex flex-col"><span class="font-bold text-sm">${exp.name}</span><span class="opacity-60 text-[8px] uppercase">${exp.time}</span></div><div class="flex items-center gap-2"><span class="text-[9px] font-black uppercase">${taken ? 'VZAL' : 'NEVZAL'}</span><span class="iconify" data-icon="${taken ? 'lucide:check-circle' : 'lucide:x-circle'}"></span></div></div>`; 
         }); 
     }
 
@@ -479,6 +490,7 @@
 
     function moveMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); renderCalendar(); }
 
+    // Kontrola každých 30 sekund pro větší přesnost
     setInterval(checkAndNotify, 30000);
     checkNotificationUI();
     render();
