@@ -1,15 +1,35 @@
-const CACHE_NAME = 'lekovka-v26';
-const ASSETS = [
-  './',
-  'index.html',
-  'https://code.iconify.design/3/3.1.0/iconify.min.js',
-  'https://cdn.tailwindcss.com'
-];
-
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
+// sw.js
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
+self.addEventListener('activate', (event) => {
+    event.waitUntil(clients.claim());
+});
+
+// Zpracování požadavku na notifikaci z hlavní aplikace
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SHOW_NOTIF') {
+        const title = event.data.title;
+        const options = {
+            body: event.data.body,
+            icon: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
+            badge: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
+            vibrate: [200, 100, 200, 100, 200],
+            tag: 'lekovka-notif', // Zabrání kupení stejných notifikací
+            renotify: true
+        };
+        event.waitUntil(self.registration.showNotification(title, options));
+    }
+});
+
+// Otevření aplikace po kliknutí na notifikaci
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: 'window' }).then((clientList) => {
+            if (clientList.length > 0) return clientList[0].focus();
+            return clients.openWindow('/');
+        })
+    );
 });
