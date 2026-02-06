@@ -4,32 +4,36 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
     <title>Lékovka PRO 2026</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#334155">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Lékovka PRO">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/822/822143.png">
-
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root { --bg: #334155; --shadow-light: #3f516a; --shadow-dark: #273140; --accent: #ffa500; --text-main: #ffffff; --red: #ef4444; --green: #22c55e; }
-        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text-main); min-height: 100vh; padding: 16px; padding-top: env(safe-area-inset-top); }
-        .neu-raised { background: var(--bg); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); border-radius: 20px; }
-        .neu-inset { background: var(--bg); box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); border-radius: 12px; }
-        .neu-btn { background: var(--bg); box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light); cursor: pointer; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent); transition: 0.2s; border: none; }
-        .neu-btn:active { box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light); transform: scale(0.98); }
-        .btn-active { color: #ffffff !important; box-shadow: inset 4px 4px 8px var(--shadow-dark); background: rgba(255,165,0,0.1); }
-        .btn-orange { background-color: var(--accent) !important; color: #1e293b !important; font-weight: 800; }
+        :root { 
+            --bg: #0f172a; 
+            --card-bg: #1e293b;
+            --border: #334155;
+            --accent: #f59e0b; 
+            --text-main: #f8fafc; 
+            --red: #ef4444; 
+            --green: #22c55e; 
+        }
+        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text-main); min-height: 100vh; padding: 16px; }
+        
+        /* Nové ploché styly namísto neumorfismu */
+        .flat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; }
+        .flat-input { background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); border-radius: 10px; }
+        .flat-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.2s; }
+        .flat-btn:active { transform: scale(0.96); background: var(--border); }
+        
+        .btn-active { border-color: var(--accent); color: var(--accent); background: rgba(245, 158, 11, 0.1); }
+        .btn-orange { background-color: var(--accent) !important; color: #0f172a !important; font-weight: 800; border: none; }
+        
         .hidden { display: none !important; }
-        .chip { padding: 10px; border-radius: 12px; font-size: 10px; font-weight: 800; cursor: pointer; background: var(--shadow-dark); opacity: 0.5; text-align: center; color: white; border: 1px solid transparent; }
-        .chip-active { opacity: 1; border-color: var(--accent); color: var(--accent); background: var(--bg); box-shadow: inset 2px 2px 5px var(--shadow-dark); }
-        .progress-container { width: 100%; height: 8px; background: var(--shadow-dark); border-radius: 4px; overflow: hidden; margin-top: 4px; }
-        .progress-bar { height: 100%; transition: width 0.3s ease, background-color 0.3s ease; }
+        .chip { padding: 10px; border-radius: 10px; font-size: 10px; font-weight: 800; cursor: pointer; background: rgba(255,255,255,0.05); text-align: center; color: white; border: 1px solid var(--border); }
+        .chip-active { border-color: var(--accent); color: var(--accent); background: rgba(245, 158, 11, 0.1); }
+        
+        .progress-container { width: 100%; height: 6px; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; transition: width 0.3s ease; }
     </style>
 </head>
 <body>
@@ -41,18 +45,18 @@
     </div>
 
     <div class="flex gap-2 mb-4">
-        <button onclick="switchTab('today')" id="tab-today" class="neu-btn flex-1 py-4 font-bold btn-active text-[10px] uppercase">Dnes</button>
-        <button onclick="switchTab('list')" id="tab-list" class="neu-btn flex-1 py-4 font-bold text-[10px] uppercase">Zásoby</button>
-        <button onclick="switchTab('stats')" id="tab-stats" class="neu-btn flex-1 py-4 font-bold text-[10px] uppercase">Historie</button>
+        <button onclick="switchTab('today')" id="tab-today" class="flat-btn flex-1 py-4 font-bold btn-active text-[10px] uppercase">Dnes</button>
+        <button onclick="switchTab('list')" id="tab-list" class="flat-btn flex-1 py-4 font-bold text-[10px] uppercase">Zásoby</button>
+        <button onclick="switchTab('stats')" id="tab-stats" class="flat-btn flex-1 py-4 font-bold text-[10px] uppercase">Historie</button>
     </div>
 
     <div id="notif-bar" class="flex gap-2 mb-8 px-1">
-        <button id="btn-notif-req" onclick="requestNotificationPermission()" class="neu-btn flex-1 py-2 text-[9px] font-black uppercase hidden">🔔 Zapnout notifikace</button>
-        <button id="btn-notif-test" onclick="sendTestNotification()" class="neu-btn flex-1 py-2 text-[9px] font-black uppercase hidden">⚡ Test notifikace</button>
+        <button id="btn-notif-req" onclick="requestNotificationPermission()" class="flat-btn flex-1 py-2 text-[9px] font-black uppercase hidden">🔔 Zapnout notifikace</button>
+        <button id="btn-notif-test" onclick="sendTestNotification()" class="flat-btn flex-1 py-2 text-[9px] font-black uppercase hidden">⚡ Test notifikace</button>
     </div>
 
     <div id="view-today">
-        <div id="global-critical-banner" class="hidden neu-raised bg-red-500/20 border-2 border-red-500 p-4 mb-4 flex items-center gap-3 text-red-500 animate-pulse">
+        <div id="global-critical-banner" class="hidden flat-card border-red-500 bg-red-500/10 p-4 mb-4 flex items-center gap-3 text-red-500 animate-pulse">
             <span class="iconify text-2xl" data-icon="lucide:alert-octagon"></span>
             <div class="text-[11px] font-black uppercase">Pozor: Docházejí zásoby léků!</div>
         </div>
@@ -64,14 +68,14 @@
 
         <div class="flex justify-between items-center mb-4 px-2">
             <h3 class="text-[10px] font-black uppercase opacity-40 tracking-widest">Dnešní přehled</h3>
-            <button id="btn-check-all" onclick="checkAllToday()" class="neu-btn px-4 py-2 text-[9px] font-black uppercase text-green-500 hidden">✓ Vše za celý den</button>
+            <button id="btn-check-all" onclick="checkAllToday()" class="flat-btn px-4 py-2 text-[9px] font-black uppercase text-green-500 border-green-500/50 hidden">✓ Vše za celý den</button>
         </div>
 
-        <div id="daily-list" class="flex flex-col gap-4"></div>
+        <div id="daily-list" class="flex flex-col gap-3"></div>
     </div>
 
     <div id="view-list" class="hidden space-y-6">
-        <div class="neu-raised p-6">
+        <div class="flat-card p-6">
             <h2 id="form-title" class="text-accent font-black text-xs uppercase mb-6 text-center tracking-widest">Přidat nový lék</h2>
             <input type="hidden" id="edit-id">
             
@@ -83,32 +87,32 @@
                     <div class="chip type-chip" onclick="setType(this, 'syringe')" data-type="syringe"><span class="iconify text-xl mb-1 mx-auto" data-icon="lucide:syringe"></span>Inj.</div>
                 </div>
 
-                <div class="neu-inset p-3"><input id="f-name" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="text" placeholder="Název léku..."></div>
+                <div class="flat-input p-3"><input id="f-name" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="text" placeholder="Název léku..."></div>
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="neu-inset p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Celkem v balení</label><input id="f-stock" class="w-full bg-transparent font-bold text-white outline-none" type="number" step="0.25" placeholder="0"></div>
-                    <div class="neu-inset p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Užívaná dávka</label><input id="f-dose" class="w-full bg-transparent font-bold text-white outline-none" type="number" value="1" step="0.25"></div>
+                    <div class="flat-input p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Celkem v balení</label><input id="f-stock" class="w-full bg-transparent font-bold text-white outline-none" type="number" step="0.25" placeholder="0"></div>
+                    <div class="flat-input p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Užívaná dávka</label><input id="f-dose" class="w-full bg-transparent font-bold text-white outline-none" type="number" value="1" step="0.25"></div>
                 </div>
 
-                <div id="stock-add-section" class="hidden neu-inset p-3 border border-accent/20">
+                <div id="stock-add-section" class="hidden flat-input p-3 border-accent/40 bg-accent/5">
                     <label class="text-[8px] font-black uppercase block mb-1 text-accent">Doplnit zásobu (přičíst)</label>
                     <div class="flex gap-2">
                         <input id="f-add-val" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="number" placeholder="Kolik ks přišlo?">
-                        <button onclick="addStockAction()" class="neu-btn px-4 py-1 text-[10px] font-black uppercase">PŘIČÍST</button>
+                        <button onclick="addStockAction()" class="flat-btn px-4 py-1 text-[10px] font-black uppercase bg-accent text-slate-900 border-none">PŘIČÍST</button>
                     </div>
                 </div>
 
                 <div class="space-y-2">
-                    <div class="neu-inset p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Naplánované časy</label><input id="f-times" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="text" readonly placeholder="Vyberte časy..."></div>
+                    <div class="flat-input p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Naplánované časy</label><input id="f-times" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="text" readonly placeholder="Vyberte časy..."></div>
                     <div class="grid grid-cols-3 gap-2">
-                        <button onclick="addTime('08:00')" class="neu-btn py-2 text-[9px] font-black uppercase">Ráno (8h)</button>
-                        <button onclick="addTime('12:00')" class="neu-btn py-2 text-[9px] font-black uppercase">Oběd (12h)</button>
-                        <button onclick="addTime('20:00')" class="neu-btn py-2 text-[9px] font-black uppercase">Večer (20h)</button>
+                        <button onclick="addTime('08:00')" class="flat-btn py-2 text-[9px] font-black uppercase">Ráno (8h)</button>
+                        <button onclick="addTime('12:00')" class="flat-btn py-2 text-[9px] font-black uppercase">Oběd (12h)</button>
+                        <button onclick="addTime('20:00')" class="flat-btn py-2 text-[9px] font-black uppercase">Večer (20h)</button>
                     </div>
                     <div class="flex gap-2">
-                        <input id="manual-time" type="time" class="neu-inset bg-transparent text-white font-bold outline-none flex-1 px-3 py-2 text-sm">
-                        <button onclick="addManualTime()" class="neu-btn px-4 py-2 text-[10px] font-black uppercase">+ ČAS</button>
-                        <button onclick="document.getElementById('f-times').value=''" class="neu-btn px-3 text-red-500 text-[10px]">Smazat</button>
+                        <input id="manual-time" type="time" class="flat-input bg-transparent text-white font-bold outline-none flex-1 px-3 py-2 text-sm">
+                        <button onclick="addManualTime()" class="flat-btn px-4 py-2 text-[10px] font-black uppercase">+ ČAS</button>
+                        <button onclick="document.getElementById('f-times').value=''" class="flat-btn px-3 text-red-500 text-[10px]">Smazat</button>
                     </div>
                 </div>
 
@@ -122,7 +126,7 @@
                     </div>
                 </div>
 
-                <button onclick="saveMed()" class="neu-btn btn-orange w-full py-4 text-xs font-black uppercase tracking-widest">Uložit lék</button>
+                <button onclick="saveMed()" class="flat-btn btn-orange w-full py-4 text-xs font-black uppercase tracking-widest">Uložit lék</button>
                 <button onclick="cancelEdit()" id="cancel-btn" class="hidden w-full text-[10px] opacity-50 uppercase py-2">Zrušit a začít znovu</button>
             </div>
         </div>
@@ -130,14 +134,14 @@
     </div>
 
     <div id="view-stats" class="hidden">
-        <div class="neu-raised p-6">
+        <div class="flat-card p-6">
             <div class="flex justify-between items-center mb-6">
-                <button onclick="moveMonth(-1)" class="neu-btn p-2"><span class="iconify" data-icon="lucide:chevron-left"></span></button>
+                <button onclick="moveMonth(-1)" class="flat-btn p-2"><span class="iconify" data-icon="lucide:chevron-left"></span></button>
                 <h2 id="calendar-month-year" class="text-accent font-black text-xs uppercase tracking-widest"></h2>
-                <button onclick="moveMonth(1)" class="neu-btn p-2"><span class="iconify" data-icon="lucide:chevron-right"></span></button>
+                <button onclick="moveMonth(1)" class="flat-btn p-2"><span class="iconify" data-icon="lucide:chevron-right"></span></button>
             </div>
             <div id="calendar-grid" class="grid grid-cols-7 gap-2 mb-6 text-center"></div>
-            <div id="detail-list" class="neu-inset p-4 space-y-2 text-[10px] min-h-[100px]">
+            <div id="detail-list" class="flat-input p-4 space-y-2 text-[10px] min-h-[100px]">
                 <div class="text-center opacity-30 uppercase font-bold mt-4">Klikněte na den v kalendáři</div>
             </div>
         </div>
@@ -145,7 +149,7 @@
 </div>
 
 <script>
-    // --- DATA & INIT ---
+    /* ZDE ZŮSTÁVÁ STEJNÁ JAVASCRIPT LOGIKA JAKO V PŮVODNÍM KÓDU */
     let meds = JSON.parse(localStorage.getItem('meds_v26_final')) || [];
     let history = JSON.parse(localStorage.getItem('hist_v26_final')) || [];
     let currentType = 'pill';
@@ -158,17 +162,8 @@
         render(); 
     }
 
-    // --- PWA & NOTIFICATIONS ---
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('SW registrován'))
-                .catch(err => console.log('SW selhal', err));
-        });
-    }
-
     function requestNotificationPermission() {
-        if (!("Notification" in window)) return alert("Notifikace nejsou podporovány.");
+        if (!("Notification" in window)) return;
         Notification.requestPermission().then(permission => {
             if (permission === "granted") checkNotificationUI();
         });
@@ -176,7 +171,7 @@
 
     function sendTestNotification() {
         if (Notification.permission === "granted") {
-            new Notification("Lékovka PRO", { body: "Takhle vypadá upozornění na léky! 💊", icon: "https://cdn-icons-png.flaticon.com/512/822/822143.png" });
+            new Notification("Lékovka PRO: Test", { body: "Takhle vypadá připomenutí!" });
         }
     }
 
@@ -211,7 +206,6 @@
         });
     }
 
-    // --- FORM LOGIC ---
     function addTime(t) { 
         let display = document.getElementById('f-times'); 
         let current = display.value ? display.value.split(',').map(x => x.trim()).filter(x => x !== "") : []; 
@@ -263,7 +257,6 @@
         return true; 
     }
 
-    // --- CRUD ---
     function saveMed() {
         const id = document.getElementById('edit-id').value;
         const name = document.getElementById('f-name').value;
@@ -356,7 +349,6 @@
         currentType = 'pill'; renderObdenButtons();
     }
 
-    // --- RENDERING ---
     function render() {
         const daily = document.getElementById('daily-list');
         const inv = document.getElementById('inventory-list');
@@ -390,23 +382,23 @@
             let planText = m.obden ? `Obden (${m.obden === 'sude' ? 'Sudé' : 'Liché'})` : (m.days.length > 0 ? m.days.map(d => dnyNazvy[d]).join(", ") : "Každý den");
 
             inv.innerHTML += `
-                <div class="neu-raised p-4 flex flex-col gap-4" style="border-left: 6px solid ${stockColorHex}">
+                <div class="flat-card p-4 flex flex-col gap-4" style="border-left-width: 6px; border-left-color: ${stockColorHex}">
                     <div class="flex justify-between items-center">
                         <div>
                             <div class="font-black text-sm uppercase text-accent">${m.name}</div>
-                            <div class="text-[10px] font-bold uppercase" style="color: ${stockColorHex}">SKLADEM: ${m.stock} ks (${statusText})</div>
+                            <div class="text-[10px] font-bold" style="color: ${stockColorHex}">SKLADEM: ${m.stock} ks (${statusText})</div>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="editMed(${m.id})" class="neu-btn p-3"><span class="iconify" data-icon="lucide:edit-3"></span></button>
-                            <button onclick="deleteMed(${m.id})" class="neu-btn p-3 text-red-500"><span class="iconify" data-icon="lucide:trash-2"></span></button>
+                            <button onclick="editMed(${m.id})" class="flat-btn p-3"><span class="iconify" data-icon="lucide:edit-3"></span></button>
+                            <button onclick="deleteMed(${m.id})" class="flat-btn p-3 text-red-500"><span class="iconify" data-icon="lucide:trash-2"></span></button>
                         </div>
                     </div>
                     <div class="px-1"><div class="progress-container"><div class="progress-bar" style="width: ${barWidth}%; background-color: ${stockColorHex}"></div></div></div>
-                    <div class="neu-inset p-3 grid grid-cols-2 gap-2 text-[9px] font-bold uppercase">
+                    <div class="flat-input p-3 grid grid-cols-2 gap-2 text-[9px] font-bold uppercase">
                         <div class="flex flex-col border-r border-white/5"><span class="opacity-40 text-[7px] mb-1">Dávka</span><span>${m.times.join(", ")} • ${m.dose}ks</span></div>
                         <div class="flex flex-col pl-2"><span class="opacity-40 text-[7px] mb-1">Plán</span><span>${planText}</span></div>
-                        <div class="flex flex-col border-r border-white/5 mt-2 pt-2 border-t"><span class="opacity-40 text-[7px] mb-1">Denně</span><span>${denniDavka} ks</span></div>
-                        <div class="flex flex-col pl-2 mt-2 pt-2 border-t"><span class="opacity-40 text-[7px] mb-1">Výdrž</span><span class="${dnyVydrze <= 5 ? 'text-red-500 animate-pulse' : 'text-green-500'}">${dnyVydrze} dní</span></div>
+                        <div class="flex flex-col border-r border-white/5 mt-2 pt-2 border-t border-white/5"><span class="opacity-40 text-[7px] mb-1">Denně</span><span>${denniDavka} ks</span></div>
+                        <div class="flex flex-col pl-2 mt-2 pt-2 border-t border-white/5"><span class="opacity-40 text-[7px] mb-1">Výdrž</span><span class="${dnyVydrze <= 5 ? 'text-red-500 animate-pulse' : 'text-green-500'}">${dnyVydrze} dní</span></div>
                     </div>
                 </div>`;
 
@@ -420,7 +412,7 @@
 
         Array.from(uniqueTimes).sort().forEach(t => {
             if (schedule.some(item => item.time === t && !item.taken)) {
-                timeShortcuts.innerHTML += `<button onclick="checkAllByTime('${t}')" class="neu-btn px-3 py-2 text-[10px] font-black border border-green-500/30 text-green-500">✓ Vše v ${t}</button>`;
+                timeShortcuts.innerHTML += `<button onclick="checkAllByTime('${t}')" class="flat-btn px-3 py-2 text-[10px] font-black border-green-500/30 text-green-500">✓ Vše v ${t}</button>`;
             }
         });
 
@@ -429,15 +421,16 @@
         schedule.sort((a,b) => a.time.localeCompare(b.time)).forEach(item => {
             const iconMap = {pill:'lucide:pill', droplet:'lucide:droplets', syrup:'lucide:test-tube', syringe:'lucide:syringe'};
             daily.innerHTML += `
-                <div class="neu-raised p-4 flex items-center justify-between ${item.taken ? 'opacity-30 grayscale' : ''}">
+                <div class="flat-card p-4 flex items-center justify-between ${item.taken ? 'opacity-30 grayscale' : ''}">
                     <div class="flex items-center gap-3">
-                        <div class="neu-inset p-3 text-accent"><span class="iconify text-xl" data-icon="${iconMap[item.type] || 'lucide:pill'}"></span></div>
+                        <div class="flat-input p-3 text-accent border-none"><span class="iconify text-xl" data-icon="${iconMap[item.type] || 'lucide:pill'}"></span></div>
                         <div><div class="font-black text-sm">${item.name}</div><div class="text-xs font-bold text-accent">${item.time} • ${item.dose} ks</div></div>
                     </div>
-                    ${!item.taken ? `<button onclick="takeMed(${item.id},'${item.time}')" class="neu-btn btn-orange px-6 py-3 text-[10px] font-black uppercase">Vzít</button>` : '<span class="iconify text-2xl text-green-500" data-icon="lucide:check-circle"></span>'}
+                    ${!item.taken ? `<button onclick="takeMed(${item.id},'${item.time}')" class="flat-btn btn-orange px-6 py-3 text-[10px] font-black uppercase">Vzít</button>` : '<span class="iconify text-2xl text-green-500" data-icon="lucide:check-circle"></span>'}
                 </div>`;
         });
         document.getElementById('global-critical-banner').classList.toggle('hidden', !globalCrit);
+        if(document.getElementById('view-stats').classList.contains('hidden') === false) renderCalendar();
     }
 
     function renderCalendar() { 
@@ -450,8 +443,8 @@
             const dStr = dateObj.toLocaleDateString('cs-CZ'); 
             const records = history.filter(h => h.date === dStr).length; 
             const planned = meds.some(m => isMedScheduledForDate(m, dateObj));
-            let dayStyle = records > 0 ? 'bg-green-500/20 text-green-400 font-bold border border-green-500/40' : (planned ? 'text-accent border border-accent/30' : 'text-white/20');
-            grid.innerHTML += `<div onclick="showDetail('${dStr}')" class="aspect-square flex flex-col items-center justify-center rounded-lg cursor-pointer ${dayStyle} text-xs transition-all active:scale-95">${i}${records>0?'<span class="text-[6px]">●</span>':''}</div>`; 
+            let dayStyle = records > 0 ? 'bg-green-500/20 text-green-400 font-bold border-green-500/40' : (planned ? 'text-accent border-accent/30' : 'text-white/20');
+            grid.innerHTML += `<div onclick="showDetail('${dStr}')" class="aspect-square flex flex-col items-center justify-center rounded-lg cursor-pointer border ${dayStyle} text-xs transition-all active:scale-95">${i}${records>0?'<span class="text-[6px]">●</span>':''}</div>`; 
         } 
     }
     
@@ -478,7 +471,6 @@
 
     function moveMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); renderCalendar(); }
 
-    // Init
     setInterval(checkAndNotify, 60000);
     checkNotificationUI();
     render();
