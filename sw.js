@@ -1,63 +1,54 @@
-// sw.js - Kompletní kód pro spolehlivé notifikace na pozadí
-
-self.addEventListener('install', (event) => {
-    // Okamžitá aktivace nové verze SW bez čekání
-    self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-    // SW převezme kontrolu nad aplikací ihned po aktivaci
-    event.waitUntil(clients.claim());
-});
-
-// Naslouchání na zprávy z index.html (funkce triggerSystemNotif)
-self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SHOW_NOTIF') {
-        const title = event.data.title;
-        const options = {
-            body: event.data.body,
-            icon: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
-            badge: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
-            
-            // Vibrace: 200ms vibruje, 100ms pauza, 200ms vibruje
-            vibrate: [200, 100, 200],
-            
-            // Důležité: Odstraněním tagu zajistíme, že každá notifikace 
-            // přijde jako nová zpráva a nesmaže tu předchozí.
-            tag: undefined, 
-            
-            // Zajišťuje, že telefon pípne/zavibruje i u dalších zpráv
-            renotify: false, 
-            
-            // Metadata pro budoucí akce
-            data: {
-                timestamp: Date.now()
-            },
-            
-            // Akce přímo v notifikaci (volitelné, zobrazí se jako tlačítka)
-            actions: [
-                { action: 'open', title: 'Otevřít Lékovku' }
-            ]
-        };
-
-        event.waitUntil(
-            self.registration.showNotification(title, options)
-        );
+// UPRAVENÁ FUNKCE PRO RUČNÍ PŘIDÁNÍ ČASU (automaticky zaměří pole)
+function addManualTime() { 
+    const t = document.getElementById('manual-time').value; 
+    if (t) { 
+        addTime(t); 
+        document.getElementById('manual-time').value = ''; 
+    } else {
+        alert("Nejdříve vyberte čas na hodinách!");
     }
-});
+}
 
-// Co se stane, když na notifikaci klikneš
-self.addEventListener('notificationclick', (event) => {
-    event.notification.close(); // Zavře notifikaci
+// UPRAVENÁ FUNKCE SAVE, KTERÁ NEZAPOMENE NA RUČNĚ ZADANÝ ČAS
+function saveMed() {
+    const id = document.getElementById('edit-id').value;
+    const name = document.getElementById('f-name').value;
+    let timesVal = document.getElementById('f-times').value;
+    const manualT = document.getElementById('manual-time').value;
 
-    // Pokusí se najít otevřené okno aplikace a zaměřit se na něj
-    event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-            for (const client of clientList) {
-                if ('focus' in client) return client.focus();
-            }
-            // Pokud aplikace neběží, otevře ji
-            if (clients.openWindow) return clients.openWindow('/');
-        })
-    );
-});
+    // POJISTKA: Pokud jsi vybral čas na hodinách, ale neklikl na "+ ČAS", 
+    // tato oprava ho tam přidá automaticky za tebe.
+    if (manualT) {
+        let current = timesVal ? timesVal.split(',').map(x => x.trim()).filter(x => x !== "") : [];
+        if (!current.includes(manualT)) {
+            current.push(manualT);
+            current.sort();
+            timesVal = current.join(', ');
+            document.getElementById('f-times').value = timesVal;
+        }
+    }
+
+    if (!name || !timesVal) {
+        return alert("Vyplňte název a alespoň jeden čas (nezapomeňte kliknout na + ČAS nebo vybrat čas na hodinách)!");
+    }
+
+    const data = { 
+        id: id ? parseInt(id) : Date.now(), 
+        name, 
+        stock: parseFloat(document.getElementById('f-stock').value) || 0, 
+        dose: parseFloat(document.getElementById('f-dose').value) || 1, 
+        type: currentType, 
+        times: timesVal.split(',').map(x => x.trim()).filter(x => x !== ""), 
+        obden: obdenType, 
+        days: Array.from(document.querySelectorAll('.day-chip.chip-active')).map(c => parseInt(c.dataset.day)), 
+        created: id ? meds.find(m => m.id == id).created : Date.now() 
+    };
+
+    if (id) { 
+        const idx = meds.findIndex(m => m.id == id); 
+        if(idx !== -1) meds[idx] = data; 
+    } else { meds.push(data); }
+    
+    cancelEdit(); 
+    update();
+}
