@@ -1,25 +1,24 @@
-const CACHE_NAME = 'lekovka-v2026-v2';
-const assets = ['./', './index.html', './manifest.json'];
+const CACHE_NAME = 'lekovka-v26-final';
+const ASSETS = [
+  './',
+  './index.html',
+  'https://cdn.tailwindcss.com',
+  'https://code.iconify.design/3/3.1.0/iconify.min.js'
+];
 
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(assets)));
+self.addEventListener('install', (e) => {
+  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(
-    keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-  )));
+self.addEventListener('fetch', (e) => {
+  e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-});
-
-// Zajištění otevření aplikace po kliku na notifikaci
-self.addEventListener('notificationclick', e => {
+// Zpracování kliknutí na notifikaci
+self.addEventListener('notificationclick', (e) => {
   e.notification.close();
   e.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+    clients.matchAll({ type: 'window' }).then(clientList => {
       if (clientList.length > 0) return clientList[0].focus();
       return clients.openWindow('./');
     })
