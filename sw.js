@@ -1,61 +1,40 @@
-const CACHE_NAME = 'lekovka-v26-ultra';
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  'https://code.iconify.design/3/3.1.0/iconify.min.js',
-  'https://cdn.tailwindcss.com',
-  'https://img.icons8.com/fluency/512/pill-2.png'
-];
+// sw.js - Service Worker pro Lékovka PRO
+const CACHE_NAME = 'lekovka-v26';
 
-// Instalace - okamžité převzetí kontroly
-self.addEventListener('install', (e) => {
-  self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
 });
 
-// Aktivace - vyčištění starých verzí
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      );
-    })
-  );
-  self.clients.claim();
+self.addEventListener('activate', (event) => {
+    event.waitUntil(clients.claim());
 });
 
-// Strategie: Cache jako záloha (aby fungoval Tailwind offline)
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
-  );
-});
-
-// Klíčová funkce: Poslech zpráv z aplikace pro zobrazení notifikace
+// Poslech zpráv z hlavní aplikace
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SHOW_NOTIF') {
-    self.registration.showNotification(event.data.title, {
-      body: event.data.body,
-      icon: 'https://img.icons8.com/fluency/512/pill-2.png',
-      badge: 'https://img.icons8.com/fluency/128/pill-2.png',
-      vibrate: [200, 100, 200],
-      requireInteraction: true,
-      data: { url: self.registration.scope }
-    });
-  }
+    if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
+        const options = {
+            body: event.data.body,
+            icon: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
+            badge: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
+            vibrate: [500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40],
+            tag: 'med-notif-' + event.data.medId + '-' + Date.now(), // Unikátní tag zajistí, že se nesloučí
+            renotify: true,
+            requireInteraction: true,
+            data: { url: './' }
+        };
+        event.waitUntil(self.registration.showNotification(event.data.title, options));
+    }
 });
 
-// Kliknutí na notifikaci otevře/zaměří aplikaci
-self.addEventListener('notificationclick', (e) => {
-  e.notification.close();
-  e.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      if (clientList.length > 0) return clientList[0].focus();
-      return clients.openWindow('./');
-    })
-  );
+// Reakce na kliknutí na notifikaci
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: 'window' }).then((clientList) => {
+            for (const client of clientList) {
+                if (client.url === '/' && 'focus' in client) return client.focus();
+            }
+            if (clients.openWindow) return clients.openWindow('/');
+        })
+    );
 });
