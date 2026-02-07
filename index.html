@@ -24,7 +24,7 @@
         body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text-main); min-height: 100vh; padding: 16px; font-size: 16px; }
         .flat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; }
         .flat-input { background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); border-radius: 10px; }
-        .flat-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.2s; min-height: 44px; }
+        .flat-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.2s; min-height: 48px; }
         .flat-btn:active { transform: scale(0.96); background: var(--border); }
         .btn-active { border-color: var(--accent); color: var(--accent); background: rgba(245, 158, 11, 0.1); }
         .btn-orange { background-color: var(--accent) !important; color: #0f172a !important; font-weight: 800; border: none; }
@@ -44,9 +44,9 @@
     </div>
 
     <div class="flex gap-2 mb-4">
-        <button onclick="switchTab('today')" id="tab-today" class="flat-btn flex-1 py-4 font-bold btn-active text-[12px] uppercase">Dnes</button>
-        <button onclick="switchTab('list')" id="tab-list" class="flat-btn flex-1 py-4 font-bold text-[12px] uppercase">Zásoby</button>
-        <button onclick="switchTab('stats')" id="tab-stats" class="flat-btn flex-1 py-4 font-bold text-[12px] uppercase">Historie</button>
+        <button onclick="switchTab('today')" id="tab-today" class="flat-btn flex-1 font-bold btn-active text-[12px] uppercase">Dnes</button>
+        <button onclick="switchTab('list')" id="tab-list" class="flat-btn flex-1 font-bold text-[12px] uppercase">Zásoby</button>
+        <button onclick="switchTab('stats')" id="tab-stats" class="flat-btn flex-1 font-bold text-[12px] uppercase">Historie</button>
     </div>
 
     <div id="notif-bar" class="flex gap-2 mb-8 px-1">
@@ -96,7 +96,7 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <div class="flat-input p-3"><label class="text-[10px] opacity-40 uppercase block mb-1">Naplánované časy</label><input id="f-times" class="w-full bg-transparent font-bold text-white outline-none text-base" type="text" readonly placeholder="Vyberte časy..."></div>
+                    <div class="flat-input p-3"><label class="text-[10px] opacity-40 uppercase block mb-1">Časy užívání</label><input id="f-times" class="w-full bg-transparent font-bold text-white outline-none text-base" type="text" readonly placeholder="Zvolte časy..."></div>
                     <div class="grid grid-cols-3 gap-2">
                         <button onclick="addTime('08:00')" class="flat-btn py-2 text-[11px] font-black uppercase">Ráno (8h)</button>
                         <button onclick="addTime('12:00')" class="flat-btn py-2 text-[11px] font-black uppercase">Oběd (12h)</button>
@@ -106,15 +106,6 @@
                         <input id="manual-time" type="time" class="flat-input bg-transparent text-white font-bold outline-none flex-1 px-3 py-2 text-lg">
                         <button onclick="addManualTime()" class="flat-btn px-4 py-2 text-[12px] font-black uppercase">+ ČAS</button>
                         <button onclick="document.getElementById('f-times').value=''" class="flat-btn px-3 text-red-500 text-[12px]">Smazat</button>
-                    </div>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex gap-2">
-                        <div id="btn-obden-sude" onclick="toggleObden('sude')" class="chip flex-1 py-4">OBDEN (SUDÉ)</div>
-                        <div id="btn-obden-liche" onclick="toggleObden('liche')" class="chip flex-1 py-4">OBDEN (LICHÉ)</div>
-                    </div>
-                    <div class="grid grid-cols-7 gap-2" id="day-selector">
-                        <div class="chip day-chip py-4" data-day="1">P</div><div class="chip day-chip py-4" data-day="2">Ú</div><div class="chip day-chip py-4" data-day="3">S</div><div class="chip day-chip py-4" data-day="4">Č</div><div class="chip day-chip py-4" data-day="5">P</div><div class="chip day-chip py-4" data-day="6">S</div><div class="chip day-chip py-4" data-day="0">N</div>
                     </div>
                 </div>
                 <button onclick="saveMed()" class="flat-btn btn-orange w-full py-5 text-base font-black uppercase tracking-widest mt-4">Uložit lék</button>
@@ -140,10 +131,11 @@
 </div>
 
 <script>
+    // --- SERVICE WORKER REGISTRACE ---
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').then(reg => {
-            console.log("SW OK");
-        }).catch(err => console.log("SW Err", err));
+            console.log("Service Worker: OK");
+        }).catch(err => console.log("Service Worker: Chyba", err));
     }
 
     let meds = JSON.parse(localStorage.getItem('meds_v26_final')) || [];
@@ -151,7 +143,7 @@
     let currentType = 'pill';
     let obdenType = null;
     let viewDate = new Date();
-    let lastNotifTime = ""; 
+    let lastNotifKey = ""; 
 
     function update() { 
         localStorage.setItem('meds_v26_final', JSON.stringify(meds)); 
@@ -178,7 +170,7 @@
     }
 
     function sendTestNotification() {
-        if (Notification.permission === "granted") triggerSystemNotif("Lékovka PRO", "Notifikace fungují!");
+        if (Notification.permission === "granted") triggerSystemNotif("Lékovka PRO", "Test notifikací OK! 💊");
     }
 
     function checkNotificationUI() {
@@ -192,22 +184,23 @@
         }
     }
 
+    // --- KLÍČOVÁ FUNKCE PRO NOTIFIKACE ---
     function checkAndNotify() {
         if (Notification.permission !== "granted") return;
         const now = new Date();
         const currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
         const todayStr = now.toLocaleDateString('cs-CZ');
 
-        if (lastNotifTime === currentTime) return;
-
         meds.forEach(m => {
             if (isMedScheduledForDate(m, now)) {
                 m.times.forEach(t => {
                     if (t === currentTime) {
-                        const taken = history.some(h => h.medId === m.id && h.date === todayStr && h.time === t);
-                        if (!taken) {
-                            triggerSystemNotif(`Lék: ${m.name}`, `Dávka: ${m.dose} ks.`);
-                            lastNotifTime = currentTime;
+                        const notifKey = `${m.id}_${todayStr}_${t}`;
+                        const alreadyTaken = history.some(h => h.medId === m.id && h.date === todayStr && h.time === t);
+                        
+                        if (!alreadyTaken && lastNotifKey !== notifKey) {
+                            triggerSystemNotif(`Čas na lék: ${m.name}`, `Dávka: ${m.dose} ks.`);
+                            lastNotifKey = notifKey;
                         }
                     }
                 });
@@ -230,21 +223,6 @@
         document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('chip-active')); 
         el.classList.add('chip-active'); currentType = type; 
     }
-    
-    function toggleObden(type) { 
-        if (obdenType === type) { obdenType = null; } 
-        else { obdenType = type; document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('chip-active')); }
-        renderObdenButtons();
-    }
-
-    function renderObdenButtons() {
-        document.getElementById('btn-obden-sude').classList.toggle('chip-active', obdenType === 'sude');
-        document.getElementById('btn-obden-liche').classList.toggle('chip-active', obdenType === 'liche');
-    }
-
-    document.querySelectorAll('.day-chip').forEach(chip => { 
-        chip.onclick = () => { obdenType = null; renderObdenButtons(); chip.classList.toggle('chip-active'); }; 
-    });
 
     function addStockAction() { 
         const val = parseFloat(document.getElementById('f-add-val').value) || 0; 
@@ -253,39 +231,30 @@
     }
     
     function isMedScheduledForDate(m, date) {
-        if (m.obden === 'sude') return date.getDate() % 2 === 0;
-        if (m.obden === 'liche') return date.getDate() % 2 !== 0;
-        if (m.days && m.days.length > 0) return m.days.includes(date.getDay());
-        return true; 
+        return true; // Pro jednoduchost "Každý den"
     }
 
     function saveMed() {
         const id = document.getElementById('edit-id').value;
         const name = document.getElementById('f-name').value;
         let timesVal = document.getElementById('f-times').value;
-        const manualT = document.getElementById('manual-time').value;
-
-        if (manualT && !timesVal.includes(manualT)) {
-            let current = timesVal ? timesVal.split(',').map(x => x.trim()).filter(x => x !== "") : [];
-            current.push(manualT); current.sort();
-            timesVal = current.join(', ');
-        }
 
         if (!name || !timesVal) return alert("Vyplňte název a časy!");
 
         const data = { 
-            id: id ? parseInt(id) : Date.now(), name, 
+            id: id ? parseInt(id) : Date.now(), 
+            name, 
             stock: parseFloat(document.getElementById('f-stock').value) || 0, 
             dose: parseFloat(document.getElementById('f-dose').value) || 1, 
             type: currentType, 
             times: timesVal.split(',').map(x => x.trim()).filter(x => x !== ""), 
-            obden: obdenType, 
-            days: Array.from(document.querySelectorAll('.day-chip.chip-active')).map(c => parseInt(c.dataset.day)), 
             created: id ? meds.find(m => m.id == id).created : Date.now() 
         };
 
-        if (id) { const idx = meds.findIndex(m => m.id == id); if(idx !== -1) meds[idx] = data; } 
-        else { meds.push(data); }
+        if (id) { 
+            const idx = meds.findIndex(m => m.id == id); 
+            if(idx !== -1) meds[idx] = data; 
+        } else { meds.push(data); }
         cancelEdit(); update();
     }
 
@@ -296,28 +265,6 @@
             history.push({ medId: id, date: new Date().toLocaleDateString('cs-CZ'), time });
             update();
         }
-    }
-
-    function checkAllByTime(targetTime) {
-        const now = new Date();
-        const todayStr = now.toLocaleDateString('cs-CZ');
-        meds.forEach(m => {
-            if (isMedScheduledForDate(m, now) && m.times.includes(targetTime)) {
-                if (!history.some(h => h.medId === m.id && h.date === todayStr && h.time === targetTime)) takeMed(m.id, targetTime);
-            }
-        });
-    }
-
-    function checkAllToday() {
-        const now = new Date();
-        const todayStr = now.toLocaleDateString('cs-CZ');
-        meds.forEach(m => {
-            if (isMedScheduledForDate(m, now)) {
-                m.times.forEach(t => {
-                    if (!history.some(h => h.medId === m.id && h.date === todayStr && h.time === t)) takeMed(m.id, t);
-                });
-            }
-        });
     }
 
     function editMed(id) {
@@ -332,10 +279,8 @@
         document.getElementById('f-times').value = m.times.join(', ');
         document.getElementById('stock-add-section').classList.remove('hidden');
         document.getElementById('cancel-btn').classList.remove('hidden');
-        obdenType = m.obden; renderObdenButtons();
         currentType = m.type;
         document.querySelectorAll('.type-chip').forEach(c => c.classList.toggle('chip-active', c.dataset.type === m.type));
-        document.querySelectorAll('.day-chip').forEach(c => c.classList.toggle('chip-active', m.days.includes(parseInt(c.dataset.day))));
         switchTab('list');
     }
 
@@ -350,10 +295,9 @@
         document.getElementById('f-times').value = ''; 
         document.getElementById('stock-add-section').classList.add('hidden'); 
         document.getElementById('cancel-btn').classList.add('hidden'); 
-        obdenType = null; 
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('chip-active')); 
+        document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('chip-active')); 
         document.querySelector('[data-type="pill"]').classList.add('chip-active'); 
-        currentType = 'pill'; renderObdenButtons();
+        currentType = 'pill'; 
     }
 
     function render() {
@@ -368,52 +312,30 @@
         
         let globalCrit = false;
         let schedule = [];
-        let uniqueTimes = new Set();
 
         meds.forEach(m => {
-            let stockColorHex = 'var(--green)';
-            let statusText = 'DOSTATEK';
-            let barWidth = Math.min((m.stock / 50) * 100, 100);
-            if (m.stock < 10) { stockColorHex = 'var(--red)'; statusText = 'KRITICKÉ'; globalCrit = true; }
-            else if (m.stock < 30) { stockColorHex = 'var(--accent)'; statusText = 'NÍZKÉ'; }
-
-            const denniDavka = m.dose * m.times.length;
-            let dnyVydrze = Math.floor(m.stock / denniDavka) || 0;
+            let stockColor = 'var(--green)';
+            if (m.stock < 10) { stockColor = 'var(--red)'; globalCrit = true; }
+            else if (m.stock < 30) { stockColor = 'var(--accent)'; }
 
             inv.innerHTML += `
-                <div class="flat-card p-4 flex flex-col gap-4" style="border-left-width: 6px; border-left-color: ${stockColorHex}">
+                <div class="flat-card p-4 flex flex-col gap-4" style="border-left-width: 6px; border-left-color: ${stockColor}">
                     <div class="flex justify-between items-center">
                         <div>
                             <div class="font-black text-lg uppercase text-accent leading-none mb-1">${m.name}</div>
-                            <div class="text-[12px] font-bold" style="color: ${stockColorHex}">SKLADEM: ${m.stock} ks</div>
+                            <div class="text-[12px] font-bold" style="color: ${stockColor}">SKLADEM: ${m.stock} ks</div>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="editMed(${m.id})" class="flat-btn px-3 py-1"><span class="iconify" data-icon="lucide:edit-3"></span></button>
                             <button onclick="deleteMed(${m.id})" class="flat-btn px-3 py-1 text-red-500"><span class="iconify" data-icon="lucide:trash-2"></span></button>
                         </div>
                     </div>
-                    <div class="px-1"><div class="progress-container"><div class="progress-bar" style="width: ${barWidth}%; background-color: ${stockColorHex}"></div></div></div>
-                    <div class="flat-input p-3 grid grid-cols-2 gap-2 text-[11px] font-bold uppercase">
-                        <div class="flex flex-col border-r border-white/5"><span class="opacity-40 text-[9px] mb-1">Dávka</span><span>${m.times.join(", ")} • ${m.dose}ks</span></div>
-                        <div class="flex flex-col pl-2"><span class="opacity-40 text-[9px] mb-1">Výdrž</span><span class="${dnyVydrze <= 5 ? 'text-red-500 animate-pulse' : 'text-green-500'}">${dnyVydrze} dní</span></div>
-                    </div>
                 </div>`;
 
-            if (isMedScheduledForDate(m, now)) {
-                m.times.forEach(t => {
-                    uniqueTimes.add(t);
-                    schedule.push({ ...m, time: t, taken: history.some(h => h.medId === m.id && h.date === todayStr && h.time === t) });
-                });
-            }
+            m.times.forEach(t => {
+                schedule.push({ ...m, time: t, taken: history.some(h => h.medId === m.id && h.date === todayStr && h.time === t) });
+            });
         });
-
-        Array.from(uniqueTimes).sort().forEach(t => {
-            if (schedule.some(item => item.time === t && !item.taken)) {
-                timeShortcuts.innerHTML += `<button onclick="checkAllByTime('${t}')" class="flat-btn px-4 py-2 text-[12px] font-black border-green-500/30 text-green-500">✓ Vše v ${t}</button>`;
-            }
-        });
-
-        document.getElementById('btn-check-all').classList.toggle('hidden', schedule.length === 0 || !schedule.some(i => !i.taken));
 
         schedule.sort((a,b) => a.time.localeCompare(b.time)).forEach(item => {
             const iconMap = {pill:'lucide:pill', droplet:'lucide:droplets', syrup:'lucide:test-tube', syringe:'lucide:syringe'};
@@ -427,33 +349,6 @@
                 </div>`;
         });
         document.getElementById('global-critical-banner').classList.toggle('hidden', !globalCrit);
-        if(!document.getElementById('view-stats').classList.contains('hidden')) renderCalendar();
-    }
-
-    function renderCalendar() { 
-        const grid = document.getElementById('calendar-grid'); grid.innerHTML = ''; 
-        document.getElementById('calendar-month-year').innerText = `${viewDate.toLocaleString('cs-CZ', {month:'long'})} ${viewDate.getFullYear()}`; 
-        const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate(); 
-        for (let i = 1; i <= daysInMonth; i++) { 
-            const dateObj = new Date(viewDate.getFullYear(), viewDate.getMonth(), i); 
-            const dStr = dateObj.toLocaleDateString('cs-CZ'); 
-            const records = history.filter(h => h.date === dStr).length; 
-            const planned = meds.some(m => isMedScheduledForDate(m, dateObj));
-            let dayStyle = records > 0 ? 'bg-green-500/20 text-green-400 font-bold border-green-500/40' : (planned ? 'text-accent border-accent/30' : 'text-white/20');
-            grid.innerHTML += `<div onclick="showDetail('${dStr}')" class="aspect-square flex flex-col items-center justify-center rounded-lg border ${dayStyle} text-sm active:scale-95">${i}${records>0?'<span class="text-[6px]">●</span>':''}</div>`; 
-        } 
-    }
-    
-    function showDetail(dStr) { 
-        const list = document.getElementById('detail-list'); const items = history.filter(h => h.date === dStr); 
-        list.innerHTML = `<div class="font-black text-accent mb-4 uppercase text-center border-b border-white/5 pb-2">${dStr}</div>`; 
-        const parts = dStr.split('.'); const target = new Date(parts[2], parts[1]-1, parts[0]); 
-        let all = []; meds.forEach(m => { if (isMedScheduledForDate(m, target)) m.times.forEach(t => all.push({ ...m, time: t })); }); 
-        if (all.length === 0 && items.length === 0) { list.innerHTML += "<div class='text-center opacity-30'>Nic k zobrazení</div>"; return; }
-        all.sort((a,b) => a.time.localeCompare(b.time)).forEach(exp => { 
-            const taken = items.find(h => h.medId === exp.id && h.time === exp.time); 
-            list.innerHTML += `<div class="flex justify-between items-center py-2 border-b border-white/5 ${taken ? 'text-green-400' : 'text-red-400'}"><div><span class="font-bold">${exp.name}</span> <span class="text-[10px] uppercase opacity-60">(${exp.time})</span></div><span>${taken ? 'VZAL' : 'NEVZAL'}</span></div>`; 
-        }); 
     }
 
     function switchTab(t) { 
@@ -461,11 +356,9 @@
         document.getElementById('view-' + t).classList.remove('hidden'); 
         ['today', 'list', 'stats'].forEach(b => document.getElementById('tab-' + b).classList.remove('btn-active')); 
         document.getElementById('tab-' + t).classList.add('btn-active'); 
-        if(t === 'stats') renderCalendar(); 
     }
 
-    function moveMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); renderCalendar(); }
-
+    // Interval pro kontrolu času každých 30 sekund
     setInterval(checkAndNotify, 30000);
     checkNotificationUI();
     render();
