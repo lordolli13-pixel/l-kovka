@@ -1,48 +1,34 @@
-const CACHE_NAME = 'lekovka-v2026-v1';
-const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  'https://code.iconify.design/3/3.1.0/iconify.min.js',
-  'https://cdn.tailwindcss.com'
-];
+const CACHE_NAME = 'lekovka-v3-cache';
 
-// Instalace a kešování
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
-  );
-  self.skipWaiting();
+    self.skipWaiting();
 });
 
-// Aktivace a promazání staré keše
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)));
-    })
-  );
-  self.clients.claim();
+    event.waitUntil(clients.claim());
 });
 
-// Agresivní fetch strategie (Cache first, then network)
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
+        const options = {
+            body: event.data.body,
+            icon: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
+            badge: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
+            vibrate: [200, 100, 200],
+            tag: 'lekovka-notif',
+            renotify: true,
+            data: { url: self.location.origin }
+        };
+        event.waitUntil(self.registration.showNotification(event.data.title, options));
+    }
 });
 
-// Obsluha kliknutí na notifikaci
 self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(
-    clients.matchAll({ type: 'window' }).then((clientList) => {
-      if (clientList.length > 0) return clientList[0].focus();
-      return clients.openWindow('./');
-    })
-  );
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ type: 'window' }).then((clientList) => {
+            if (clientList.length > 0) return clientList[0].focus();
+            return clients.openWindow('./');
+        })
+    );
 });
