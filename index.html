@@ -3,9 +3,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
-    <title>Lékovka PRO V2</title>
+    <title>Lékovka PRO 2026</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/512/pill-2.png">
+    
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
@@ -14,43 +16,52 @@
         body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text-main); min-height: 100vh; padding: 16px; -webkit-tap-highlight-color: transparent; }
         .flat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; }
         .flat-input { background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); border-radius: 10px; }
-        .flat-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.2s; min-height: 44px; }
+        .flat-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.2s; }
         .flat-btn:active { transform: scale(0.96); background: var(--border); }
         .btn-active { border-color: var(--accent); color: var(--accent); background: rgba(245, 158, 11, 0.1); }
         .btn-orange { background-color: var(--accent) !important; color: #0f172a !important; font-weight: 800; border: none; }
         .hidden { display: none !important; }
-        .chip { padding: 10px; border-radius: 10px; font-size: 10px; font-weight: 800; cursor: pointer; background: rgba(255,255,255,0.05); text-align: center; border: 1px solid var(--border); }
+        .chip { padding: 10px; border-radius: 10px; font-size: 10px; font-weight: 800; cursor: pointer; background: rgba(255,255,255,0.05); text-align: center; color: white; border: 1px solid var(--border); }
         .chip-active { border-color: var(--accent); color: var(--accent); background: rgba(245, 158, 11, 0.1); }
         .progress-container { width: 100%; height: 6px; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
         .progress-bar { height: 100%; transition: width 0.3s ease; }
     </style>
 </head>
 <body>
+
 <div class="max-w-2xl mx-auto pb-10">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-accent font-black tracking-tighter text-2xl uppercase">Lékovka V2</h1>
+        <h1 class="text-accent font-black tracking-tighter text-2xl uppercase">Lékovka PRO</h1>
         <div id="date-now" class="text-[10px] font-bold opacity-50 uppercase text-right"></div>
     </div>
+
     <div class="flex gap-2 mb-4">
-        <button onclick="switchTab('today')" id="tab-today" class="flat-btn flex-1 font-bold btn-active text-[10px] uppercase">Dnes</button>
-        <button onclick="switchTab('list')" id="tab-list" class="flat-btn flex-1 font-bold text-[10px] uppercase">Zásoby</button>
-        <button onclick="switchTab('stats')" id="tab-stats" class="flat-btn flex-1 font-bold text-[10px] uppercase">Historie</button>
+        <button onclick="switchTab('today')" id="tab-today" class="flat-btn flex-1 py-4 font-bold btn-active text-[10px] uppercase">Dnes</button>
+        <button onclick="switchTab('list')" id="tab-list" class="flat-btn flex-1 py-4 font-bold text-[10px] uppercase">Zásoby</button>
+        <button onclick="switchTab('stats')" id="tab-stats" class="flat-btn flex-1 py-4 font-bold text-[10px] uppercase">Historie</button>
     </div>
-    <div id="notif-bar" class="flex gap-2 mb-6 px-1">
-        <button id="btn-notif-req" onclick="requestNotificationPermission()" class="flat-btn flex-1 py-2 text-[9px] font-black uppercase hidden">🔔 Aktivovat notifikace</button>
+
+    <div id="notif-bar" class="flex gap-2 mb-8 px-1">
+        <button id="btn-notif-req" onclick="requestNotificationPermission()" class="flat-btn flex-1 py-2 text-[9px] font-black uppercase hidden">🔔 Zapnout notifikace</button>
+        <button id="btn-notif-test" onclick="sendTestNotification()" class="flat-btn flex-1 py-2 text-[9px] font-black uppercase hidden">⚡ Test notifikace</button>
     </div>
+
     <div id="view-today">
         <div id="global-critical-banner" class="hidden flat-card border-red-500 bg-red-500/10 p-4 mb-4 flex items-center gap-3 text-red-500 animate-pulse">
             <span class="iconify text-2xl" data-icon="lucide:alert-octagon"></span>
             <div class="text-[11px] font-black uppercase">Pozor: Docházejí zásoby léků!</div>
         </div>
-        <div id="time-shortcuts" class="flex flex-wrap gap-2 px-1 mb-6 justify-center"></div>
+        <div class="mb-6">
+            <h3 class="text-[10px] font-black uppercase opacity-40 tracking-widest mb-3 px-2">Rychlé označení</h3>
+            <div id="time-shortcuts" class="flex flex-wrap gap-2 px-1"></div>
+        </div>
         <div id="daily-list" class="flex flex-col gap-3"></div>
         <button id="btn-check-all" onclick="checkAllToday()" class="w-full mt-4 py-3 text-[10px] font-black uppercase text-green-500 opacity-50 hidden">✓ Označit vše za vyřízené</button>
     </div>
+
     <div id="view-list" class="hidden space-y-6">
-        <div class="flat-card p-5">
-            <h2 id="form-title" class="text-accent font-black text-xs uppercase mb-5 text-center">Nový lék</h2>
+        <div class="flat-card p-6">
+            <h2 id="form-title" class="text-accent font-black text-xs uppercase mb-6 text-center tracking-widest">Přidat nový lék</h2>
             <input type="hidden" id="edit-id">
             <div class="space-y-4">
                 <div class="grid grid-cols-4 gap-2">
@@ -70,7 +81,7 @@
                         <button onclick="addStockAction()" class="flat-btn px-4 py-1 text-[10px] font-black uppercase bg-accent text-slate-900 border-none">PŘIČÍST</button>
                     </div>
                 </div>
-                <div class="flat-input p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Časy užívání</label><input id="f-times" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="text" readonly></div>
+                <div class="flat-input p-3"><label class="text-[8px] opacity-40 uppercase block mb-1">Časy</label><input id="f-times" class="w-full bg-transparent font-bold text-white outline-none text-sm" type="text" readonly></div>
                 <div class="grid grid-cols-3 gap-2">
                     <button onclick="addTime('08:00')" class="flat-btn py-2 text-[9px] font-black uppercase">Ráno</button>
                     <button onclick="addTime('12:00')" class="flat-btn py-2 text-[9px] font-black uppercase">Oběd</button>
@@ -95,74 +106,102 @@
         </div>
         <div id="inventory-list" class="space-y-4 mt-8"></div>
     </div>
+
     <div id="view-stats" class="hidden">
-        <div class="flat-card p-5">
+        <div class="flat-card p-6">
             <div class="flex justify-between items-center mb-6">
                 <button onclick="moveMonth(-1)" class="flat-btn p-2"><span class="iconify" data-icon="lucide:chevron-left"></span></button>
                 <h2 id="calendar-month-year" class="text-accent font-black text-xs uppercase tracking-widest"></h2>
                 <button onclick="moveMonth(1)" class="flat-btn p-2"><span class="iconify" data-icon="lucide:chevron-right"></span></button>
             </div>
             <div id="calendar-grid" class="grid grid-cols-7 gap-2 mb-6 text-center"></div>
-            <div id="detail-list" class="flat-input p-4 space-y-2 text-[11px] min-h-[100px]"></div>
+            <div id="detail-list" class="flat-input p-4 space-y-2 text-[10px] min-h-[100px]"></div>
         </div>
     </div>
 </div>
+
 <script>
     let meds = JSON.parse(localStorage.getItem('meds_v26_final')) || [];
     let history = JSON.parse(localStorage.getItem('hist_v26_final')) || [];
     let currentType = 'pill', obdenType = null, viewDate = new Date();
 
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+    // REGISTRACE SERVICE WORKERU (Nutné pro notifikace a ikonu)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+            console.log('SW registrován');
+        });
+    }
 
     function update() { localStorage.setItem('meds_v26_final', JSON.stringify(meds)); localStorage.setItem('hist_v26_final', JSON.stringify(history)); render(); }
 
     function requestNotificationPermission() {
-        Notification.requestPermission().then(p => { if(p==='granted') { checkNotificationUI(); new Notification("Lékovka PRO V2", {body: "Notifikace aktivovány!"}); }});
+        if (!("Notification" in window)) return alert("Tento prohlížeč nepodporuje notifikace.");
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                checkNotificationUI();
+                sendTestNotification();
+            }
+        });
+    }
+
+    function sendTestNotification() {
+        if (Notification.permission === "granted") {
+            // Použití Service Workeru pro spolehlivější notifikaci
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification("Lékovka PRO", {
+                    body: "Testovací notifikace je funkční!",
+                    icon: "https://img.icons8.com/fluency/512/pill-2.png"
+                });
+            });
+        }
     }
 
     function checkNotificationUI() {
-        const b = document.getElementById('btn-notif-req');
-        if(!("Notification" in window) || Notification.permission === "granted") b.classList.add('hidden');
-        else b.classList.remove('hidden');
+        const btnReq = document.getElementById('btn-notif-req');
+        const btnTest = document.getElementById('btn-notif-test');
+        if (Notification.permission === "granted") {
+            btnReq.classList.add('hidden'); btnTest.classList.remove('hidden');
+        } else {
+            btnReq.classList.remove('hidden'); btnTest.classList.add('hidden');
+        }
     }
 
-    function addTime(t) { 
-        let d = document.getElementById('f-times'); 
-        let c = d.value ? d.value.split(',').map(x=>x.trim()) : [];
-        if(!c.includes(t)) { c.push(t); c.sort(); d.value = c.join(', '); }
+    // Automatická kontrola času pro notifikace
+    function checkAndNotify() {
+        if (Notification.permission !== "granted") return;
+        const now = new Date();
+        const currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+        const todayStr = now.toLocaleDateString('cs-CZ');
+
+        meds.forEach(m => {
+            if (isMedScheduledForDate(m, now)) {
+                m.times.forEach(t => {
+                    if (t === currentTime) {
+                        const taken = history.some(h => h.medId === m.id && h.date === todayStr && h.time === t);
+                        if (!taken) {
+                            navigator.serviceWorker.ready.then(reg => {
+                                reg.showNotification(`Čas na lék: ${m.name}`, {
+                                    body: `Dávka: ${m.dose} ks.`,
+                                    icon: "https://img.icons8.com/fluency/512/pill-2.png",
+                                    tag: m.id + t // Zabrání duplicitám
+                                });
+                            });
+                        }
+                    }
+                });
+            }
+        });
     }
 
+    // --- ZBYTEK FUNKCÍ Z VAŠEHO KÓDU (Ukládání, Renderování, atd.) ---
+    function addTime(t) { let d = document.getElementById('f-times'); let c = d.value ? d.value.split(',').map(x=>x.trim()) : []; if(!c.includes(t)) { c.push(t); c.sort(); d.value = c.join(', '); } }
     function addManualTime() { const t = document.getElementById('manual-time').value; if(t) { addTime(t); document.getElementById('manual-time').value=''; } }
-
     function setType(el, t) { document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('chip-active')); el.classList.add('chip-active'); currentType = t; }
-
-    function toggleObden(t) {
-        obdenType = (obdenType === t) ? null : t;
-        if(obdenType) document.querySelectorAll('.day-chip').forEach(c=>c.classList.remove('chip-active'));
-        renderObdenButtons();
-    }
-
-    function renderObdenButtons() {
-        document.getElementById('btn-obden-sude').classList.toggle('chip-active', obdenType==='sude');
-        document.getElementById('btn-obden-liche').classList.toggle('chip-active', obdenType==='liche');
-    }
-
-    document.querySelectorAll('.day-chip').forEach(c => {
-        c.onclick = () => { obdenType = null; renderObdenButtons(); c.classList.toggle('chip-active'); };
-    });
-
-    function addStockAction() {
-        const v = parseFloat(document.getElementById('f-add-val').value) || 0;
-        document.getElementById('f-stock').value = (parseFloat(document.getElementById('f-stock').value)||0) + v;
-        document.getElementById('f-add-val').value = '';
-    }
-
-    function isMedScheduledForDate(m, d) {
-        if(m.obden === 'sude') return d.getDate() % 2 === 0;
-        if(m.obden === 'liche') return d.getDate() % 2 !== 0;
-        if(m.days && m.days.length > 0) return m.days.includes(d.getDay());
-        return true;
-    }
+    function toggleObden(t) { obdenType = (obdenType === t) ? null : t; if(obdenType) document.querySelectorAll('.day-chip').forEach(c=>c.classList.remove('chip-active')); renderObdenButtons(); }
+    function renderObdenButtons() { document.getElementById('btn-obden-sude').classList.toggle('chip-active', obdenType==='sude'); document.getElementById('btn-obden-liche').classList.toggle('chip-active', obdenType==='liche'); }
+    document.querySelectorAll('.day-chip').forEach(c => { c.onclick = () => { obdenType = null; renderObdenButtons(); c.classList.toggle('chip-active'); }; });
+    function addStockAction() { const v = parseFloat(document.getElementById('f-add-val').value) || 0; document.getElementById('f-stock').value = (parseFloat(document.getElementById('f-stock').value)||0) + v; document.getElementById('f-add-val').value = ''; }
+    function isMedScheduledForDate(m, d) { if(m.obden === 'sude') return d.getDate() % 2 === 0; if(m.obden === 'liche') return d.getDate() % 2 !== 0; if(m.days && m.days.length > 0) return m.days.includes(d.getDay()); return true; }
 
     function saveMed() {
         const id = document.getElementById('edit-id').value;
@@ -245,37 +284,29 @@
             const perDay = m.dose * m.times.length;
             const daysLeft = perDay > 0 ? Math.floor(m.stock / (perDay * (m.obden ? 0.5 : (m.days.length?m.days.length/7:1)))) : 0;
 
-            inv.innerHTML += `
-                <div class="flat-card p-4 border-l-4" style="border-left-color: ${color}">
-                    <div class="flex justify-between items-start mb-2">
-                        <div><div class="font-black text-sm uppercase text-accent">${m.name}</div><div class="text-[10px] font-bold" style="color:${color}">${m.stock} ks skladem</div></div>
-                        <div class="flex gap-2">
-                            <button onclick="editMed(${m.id})" class="flat-btn p-2"><span class="iconify" data-icon="lucide:edit-3"></span></button>
-                            <button onclick="deleteMed(${m.id})" class="flat-btn p-2 text-red-500"><span class="iconify" data-icon="lucide:trash-2"></span></button>
-                        </div>
-                    </div>
-                    <div class="progress-container mb-3"><div class="progress-bar" style="width:${Math.min(100, m.stock)}%; background:${color}"></div></div>
-                    <div class="grid grid-cols-2 gap-2 text-[9px] font-bold opacity-70">
-                        <div>DÁVKA: ${m.dose}ks (${m.times.join(', ')})</div>
-                        <div class="text-right">DOJDE ZA: <span class="${daysLeft<5?'text-red-500 animate-pulse':''}">${daysLeft} DNÍ</span></div>
-                    </div>
-                </div>`;
+            inv.innerHTML += `<div class="flat-card p-4" style="border-left: 4px solid ${color}">
+                <div class="flex justify-between items-start mb-2">
+                    <div><div class="font-black text-sm uppercase text-accent">${m.name}</div><div class="text-[10px] font-bold" style="color:${color}">${m.stock} ks skladem</div></div>
+                    <div class="flex gap-2"><button onclick="editMed(${m.id})" class="flat-btn p-2"><span class="iconify" data-icon="lucide:edit-3"></span></button>
+                    <button onclick="deleteMed(${m.id})" class="flat-btn p-2 text-red-500"><span class="iconify" data-icon="lucide:trash-2"></span></button></div>
+                </div>
+                <div class="progress-container mb-3"><div class="progress-bar" style="width:${Math.min(100, m.stock)}%; background:${color}"></div></div>
+                <div class="grid grid-cols-2 gap-2 text-[9px] font-bold opacity-70"><div>DÁVKA: ${m.dose}ks</div><div class="text-right">DOJDE ZA: ${daysLeft} DNÍ</div></div>
+            </div>`;
             if(isMedScheduledForDate(m, now)) m.times.forEach(t => { uTimes.add(t); sched.push({...m, time:t, taken:history.some(h=>h.medId===m.id && h.date===today && h.time===t)}); });
         });
 
         Array.from(uTimes).sort().forEach(t => { if(sched.some(i=>i.time===t && !i.taken)) shortcuts.innerHTML += `<button onclick="checkAllByTime('${t}')" class="flat-btn px-3 py-1 text-[9px] font-bold border-green-500/30 text-green-500">✓ Vše v ${t}</button>`; });
-        document.getElementById('btn-check-all').classList.toggle('hidden', !sched.some(i=>!i.taken));
         
         sched.sort((a,b)=>a.time.localeCompare(b.time)).forEach(i => {
             const icons = {pill:'lucide:pill', droplet:'lucide:droplets', syrup:'lucide:test-tube', syringe:'lucide:syringe'};
-            daily.innerHTML += `
-                <div class="flat-card p-4 flex items-center justify-between ${i.taken?'opacity-30 grayscale':''}">
-                    <div class="flex items-center gap-3">
-                        <div class="flat-input p-3 text-accent border-none"><span class="iconify text-xl" data-icon="${icons[i.type]||'lucide:pill'}"></span></div>
-                        <div><div class="font-black text-sm">${i.name}</div><div class="text-[10px] font-bold text-accent">${i.time} • ${i.dose} ks</div></div>
-                    </div>
-                    ${!i.taken ? `<button onclick="takeMed(${i.id},'${i.time}')" class="flat-btn btn-orange px-6 py-2 text-[10px] font-black uppercase">Vzít</button>` : '<span class="iconify text-2xl text-green-500" data-icon="lucide:check-circle"></span>'}
-                </div>`;
+            daily.innerHTML += `<div class="flat-card p-4 flex items-center justify-between ${i.taken?'opacity-30 grayscale':''}">
+                <div class="flex items-center gap-3">
+                    <div class="flat-input p-3 text-accent border-none"><span class="iconify text-xl" data-icon="${icons[i.type]||'lucide:pill'}"></span></div>
+                    <div><div class="font-black text-sm">${i.name}</div><div class="text-[10px] font-bold text-accent">${i.time} • ${i.dose} ks</div></div>
+                </div>
+                ${!i.taken ? `<button onclick="takeMed(${i.id},'${i.time}')" class="flat-btn btn-orange px-6 py-2 text-[10px] font-black uppercase">Vzít</button>` : '<span class="iconify text-2xl text-green-500" data-icon="lucide:check-circle"></span>'}
+            </div>`;
         });
         document.getElementById('global-critical-banner').classList.toggle('hidden', !crit);
     }
@@ -289,7 +320,7 @@
             const date = new Date(viewDate.getFullYear(), viewDate.getMonth(), i), dStr = date.toLocaleDateString('cs-CZ');
             const hasRec = history.filter(h=>h.date===dStr).length, planned = meds.some(m=>isMedScheduledForDate(m, date));
             let style = hasRec > 0 ? 'bg-green-500/20 text-green-400 border-green-500/40' : (planned ? 'border-accent/30 text-accent' : 'opacity-20');
-            g.innerHTML += `<div onclick="showDetail('${dStr}')" class="aspect-square flex flex-col items-center justify-center rounded-lg border ${style} text-[10px] cursor-pointer">${i}${hasRec>0?'<span class="text-[6px]">●</span>':''}</div>`;
+            g.innerHTML += `<div onclick="showDetail('${dStr}')" class="aspect-square flex flex-col items-center justify-center rounded-lg border ${style} text-[10px] cursor-pointer">${i}</div>`;
         }
     }
 
@@ -298,7 +329,6 @@
         l.innerHTML = `<div class="font-black text-accent text-center mb-3">${d}</div>`;
         let all = []; const parts = d.split('.'); const target = new Date(parts[2], parts[1]-1, parts[0]);
         meds.forEach(m => { if(isMedScheduledForDate(m, target)) m.times.forEach(t => all.push({...m, time:t})); });
-        if(!all.length && !items.length) { l.innerHTML += '<div class="text-center opacity-30">ŽÁDNÉ ZÁZNAMY</div>'; return; }
         all.forEach(exp => {
             const taken = items.find(h=>h.medId===exp.id && h.time===exp.time);
             l.innerHTML += `<div class="flex justify-between py-1 border-b border-white/5 ${taken?'text-green-400':'text-red-400/50'}"><span>${exp.name} (${exp.time})</span><span>${taken?'VZATO':'NEVZATO'}</span></div>`;
@@ -315,6 +345,8 @@
 
     function moveMonth(dir) { viewDate.setMonth(viewDate.getMonth()+dir); renderCalendar(); }
     
+    // Interval pro kontrolu notifikací každou minutu
+    setInterval(checkAndNotify, 60000);
     checkNotificationUI(); render();
 </script>
 </body>
