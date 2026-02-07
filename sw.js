@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lekovka-v26';
+const CACHE_NAME = 'lekovka-v2026-v2';
 const assets = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
@@ -15,7 +15,7 @@ self.addEventListener('fetch', e => {
   e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
 
-// Zajišťuje otevření aplikace po kliknutí na upozornění
+// Zajištění otevření aplikace po kliku na notifikaci
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   e.waitUntil(
