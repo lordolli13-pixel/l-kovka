@@ -1,13 +1,14 @@
 {
   "name": "Lékovka PRO 2026",
   "short_name": "Lékovka",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "theme_color": "#f59e0b",
+  "description": "Profesionální správa léků a zásob",
   "icons": [
     {
-      "src": "https://img.icons8.com/fluency/512/pill-2.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/822/822143.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
