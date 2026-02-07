@@ -1,5 +1,4 @@
-const CACHE_NAME = 'lekovka-v3-cache';
-
+// sw.js - Service Worker pro Lékovku PRO 2026
 self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
@@ -8,16 +7,18 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(clients.claim());
 });
 
+// Naslouchání na zprávu z hlavní aplikace
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
         const options = {
             body: event.data.body,
             icon: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
             badge: 'https://cdn-icons-png.flaticon.com/512/822/822143.png',
-            vibrate: [200, 100, 200],
-            tag: 'lekovka-notif',
+            vibrate: [500, 110, 500, 110, 450, 110, 200, 110],
+            tag: 'med-reminder-' + event.data.medId, // Zabrání duplicitám pro stejný lék
             renotify: true,
-            data: { url: self.location.origin }
+            requireInteraction: true,
+            data: { url: './' }
         };
         event.waitUntil(self.registration.showNotification(event.data.title, options));
     }
