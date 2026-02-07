@@ -1,34 +1,20 @@
-// sw.js - Hlídač notifikací na pozadí
-self.addEventListener('install', (event) => {
-    self.skipWaiting();
+const CACHE_NAME = 'lekovka-v2-cache';
+const ASSETS = [
+  'index.html',
+  'manifest.json',
+  'https://code.iconify.design/3/3.1.0/iconify.min.js',
+  'https://cdn.tailwindcss.com'
+];
+
+self.addEventListener('install', (e) => {
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));
 });
 
-self.addEventListener('activate', (event) => {
-    event.waitUntil(clients.claim());
+self.addEventListener('activate', (e) => {
+  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))));
 });
 
-self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SHOW_NOTIF') {
-        const title = event.data.title;
-        const options = {
-            body: event.data.body,
-            icon: 'https://cdn-icons-png.flaticon.com/512/3028/3028549.png',
-            badge: 'https://cdn-icons-png.flaticon.com/512/3028/3028549.png',
-            vibrate: [200, 100, 200],
-            tag: 'lekovka-notif',
-            renotify: true,
-            data: { url: self.location.origin }
-        };
-        event.waitUntil(self.registration.showNotification(title, options));
-    }
-});
-
-self.addEventListener('notificationclick', (event) => {
-    event.notification.close();
-    event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-            if (windowClients.length > 0) return windowClients[0].focus();
-            return clients.openWindow('/');
-        })
-    );
+self.addEventListener('fetch', (e) => {
+  e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request)));
 });
