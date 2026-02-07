@@ -1,4 +1,4 @@
-// sw.js - Service Worker pro Lékovka PRO 2026
+// sw.js - Hlídač notifikací na pozadí
 self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
@@ -14,25 +14,21 @@ self.addEventListener('message', (event) => {
             body: event.data.body,
             icon: 'https://cdn-icons-png.flaticon.com/512/3028/3028549.png',
             badge: 'https://cdn-icons-png.flaticon.com/512/3028/3028549.png',
-            vibrate: [300, 100, 300],
-            data: { arrival: Date.now() },
-            actions: [{ action: 'open', title: 'Otevřít Lékovku' }]
+            vibrate: [200, 100, 200],
+            tag: 'lekovka-notif',
+            renotify: true,
+            data: { url: self.location.origin }
         };
-
-        event.waitUntil(
-            self.registration.showNotification(title, options)
-        );
+        event.waitUntil(self.registration.showNotification(title, options));
     }
 });
 
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-            for (const client of clientList) {
-                if ('focus' in client) return client.focus();
-            }
-            if (clients.openWindow) return clients.openWindow('/');
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+            if (windowClients.length > 0) return windowClients[0].focus();
+            return clients.openWindow('/');
         })
     );
 });
