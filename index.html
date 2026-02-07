@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Lékovka PRO 2026</title>
     <link rel="manifest" href="manifest.json">
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
@@ -18,10 +21,10 @@
             --red: #ef4444; 
             --green: #22c55e; 
         }
-        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text-main); min-height: 100vh; padding: 16px; }
+        body { background-color: var(--bg); font-family: 'Quicksand', sans-serif; color: var(--text-main); min-height: 100vh; padding: 16px; -webkit-tap-highlight-color: transparent; }
         .flat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; }
         .flat-input { background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border); border-radius: 10px; }
-        .flat-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.2s; }
+        .flat-btn { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-main); transition: 0.2s; cursor: pointer; }
         .flat-btn:active { transform: scale(0.96); background: var(--border); }
         .btn-active { border-color: var(--accent); color: var(--accent); background: rgba(245, 158, 11, 0.1); }
         .btn-orange { background-color: var(--accent) !important; color: #0f172a !important; font-weight: 800; border: none; }
@@ -36,7 +39,10 @@
 
 <div class="max-w-2xl mx-auto pb-10">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-accent font-black tracking-tighter text-2xl uppercase">Lékovka PRO</h1>
+        <div>
+            <h1 class="text-accent font-black tracking-tighter text-2xl uppercase">Lékovka PRO</h1>
+            <div id="wake-status" class="text-[8px] opacity-30 uppercase font-bold">WakeLock: Neaktivní</div>
+        </div>
         <div id="date-now" class="text-[10px] font-bold opacity-50 uppercase text-right"></div>
     </div>
 
@@ -151,6 +157,7 @@
     let obdenType = null;
     let viewDate = new Date();
     let lastCheckedMinute = "";
+    let wakeLock = null;
 
     function update() { 
         localStorage.setItem('meds_v26_final', JSON.stringify(meds)); 
@@ -158,7 +165,26 @@
         render(); 
     }
 
-    // --- NOTIFIKACE MODERNA ---
+    // --- WAKE LOCK (ZABRÁNĚNÍ USPÁNÍ DISPLEJE) ---
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+                document.getElementById('wake-status').innerText = "WakeLock: Aktivní";
+                wakeLock.addEventListener('release', () => {
+                    document.getElementById('wake-status').innerText = "WakeLock: Neaktivní";
+                });
+            }
+        } catch (err) { console.error(`${err.name}, ${err.message}`); }
+    }
+    // Re-aktivace při návratu do okna
+    document.addEventListener('visibilitychange', async () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') {
+            await requestWakeLock();
+        }
+    });
+
+    // --- NOTIFIKACE ---
     function requestNotificationPermission() {
         if (!("Notification" in window)) return;
         Notification.requestPermission().then(permission => {
@@ -185,7 +211,8 @@
                     icon: 'https://cdn-icons-png.flaticon.com/512/4320/4320353.png',
                     badge: 'https://cdn-icons-png.flaticon.com/512/4320/4320353.png',
                     vibrate: [200, 100, 200],
-                    tag: 'med-reminder'
+                    tag: 'med-reminder',
+                    requireInteraction: true // Notifikace nezmizí, dokud ji uživatel nezavře
                 });
             });
         }
@@ -207,7 +234,7 @@
                     if (t === currentTime) {
                         const taken = history.some(h => h.medId === m.id && h.date === todayStr && h.time === t);
                         if (!taken) {
-                            sendPush(`Čas na lék: ${m.name}`, `Dávka: ${m.dose} ks.`);
+                            sendPush(`Čas na lék: ${m.name}`, `Dávka: ${m.dose} ks. Klikněte pro otevření.`);
                         }
                     }
                 });
@@ -216,7 +243,7 @@
         lastCheckedMinute = currentTime;
     }
 
-    // --- TVÉ FUNKCE ---
+    // --- CORE LOGIKA ---
     function addTime(t) { 
         let display = document.getElementById('f-times'); 
         let current = display.value ? display.value.split(',').map(x => x.trim()).filter(x => x !== "") : []; 
@@ -439,7 +466,6 @@
                 </div>`;
         });
         document.getElementById('global-critical-banner').classList.toggle('hidden', !globalCrit);
-        if(document.getElementById('view-stats').classList.contains('hidden') === false) renderCalendar();
     }
 
     function renderCalendar() { 
@@ -488,8 +514,12 @@
         });
     }
 
-    setInterval(checkAndNotify, 30000); // Kontrola každých 30s
-    render();
+    // Spuštění po načtení
+    window.addEventListener('DOMContentLoaded', () => {
+        requestWakeLock(); // Aktivuje WakeLock hned po startu
+        setInterval(checkAndNotify, 30000); // Kontrola každých 30s
+        render();
+    });
 </script>
 </body>
 </html>
